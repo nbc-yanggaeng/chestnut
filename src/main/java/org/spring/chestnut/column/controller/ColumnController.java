@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -44,4 +45,27 @@ public class ColumnController {
                 .data(columnList)
                 .build());
     }
+
+    @PutMapping("columns/{columnId}")
+    public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> updateColumn(
+        @PathVariable("columnId") Long columnId,
+        ColumnRequestDto requestDto
+    ){
+        ColumnEntity updatedColumn = columnService.updateColumn(columnId, requestDto);
+
+        ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
+            updatedColumn.getTitle(), updatedColumn.getSequence());
+
+        List<ColumnResponseDto> columnList = Arrays.asList(columnResponseDto);
+
+        return ResponseEntity.ok().body(
+            ResponseDto.<List<ColumnResponseDto>>builder()
+                .message("컬럼을 수정했습니다.")
+                .data(columnList)
+                .build()
+        );
+    }
+
+
+
 }

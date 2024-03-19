@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
 import org.spring.chestnut.column.reposiotry.ColumnRepository;
+import org.spring.chestnut.global.execption.ColumnNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,4 +31,16 @@ public class ColumnService {
         // 컬럼 저장 및 반환
         return columnRepository.save(newColumn);
     }
+
+    public ColumnEntity updateColumn(
+        Long columnId,
+        ColumnRequestDto requestDto
+    ) {
+        ColumnEntity column = columnRepository.findById(columnId)
+            .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
+
+        column.setTitle(requestDto.getTitle());
+        return columnRepository.save(column);
+    }
+
 }
