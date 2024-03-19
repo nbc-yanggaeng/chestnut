@@ -72,4 +72,14 @@ public class CardServiceImpl implements CardService {
         return new CardResponse(updateCard, updateWorkers);
     }
 
+    @Override
+    public void deleteCard(Long cardId, UserDetails member) {
+
+        CardEntity cardEntity = cardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+
+        cardRepository.delete(cardEntity);
+        workerRepository.deleteByCardId(cardId);
+    }
+
 }

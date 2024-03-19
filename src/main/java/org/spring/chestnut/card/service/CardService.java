@@ -12,4 +12,6 @@ public interface CardService {
 
     CardResponse updateCard(Long cardId, CardRequest request, WorkerRequest workerRequest,
         UserDetails member);
+
+    void deleteCard(Long cardId, UserDetails member);
 }
