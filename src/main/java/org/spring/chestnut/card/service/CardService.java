@@ -10,4 +10,6 @@ public interface CardService {
     CardResponse createCard(Long boardId, Long columnId, CardRequest request,
         WorkerRequest workerRequest, UserDetails member);
 
+    CardResponse updateCard(Long cardId, CardRequest request, WorkerRequest workerRequest,
+        UserDetails member);
 }

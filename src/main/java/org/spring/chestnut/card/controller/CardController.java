@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +36,20 @@ public class CardController {
             workerRequest, userDetails);
 
         return ResponseDto.ok("카드 생성 성공", cardResponse);
+    }
+
+    @PutMapping("/cards/{cardId}")
+    public ResponseEntity<ResponseDto<CardResponse>> updateCard(
+        @PathVariable Long cardId,
+        @RequestBody CardRequest cardRequest,
+        @RequestBody WorkerRequest workerRequest,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        CardResponse response = cardService.updateCard(cardId, cardRequest, workerRequest,
+            userDetails);
+
+        return ResponseDto.ok("카드 수정 성공", response);
     }
 
 }

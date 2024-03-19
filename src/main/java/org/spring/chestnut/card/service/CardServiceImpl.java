@@ -40,4 +40,36 @@ public class CardServiceImpl implements CardService {
         return new CardResponse(save, workerList);
     }
 
+    @Override
+    public CardResponse updateCard(Long cardId, CardRequest request, WorkerRequest workerRequest,
+        UserDetails member) {
+
+        CardEntity cardEntity = cardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+
+        cardEntity.updateCard(request);
+        CardEntity updateCard = cardRepository.saveAndFlush(cardEntity);
+
+        List<Long> workerList = workerRequest.getWorkerList();
+        List<WorkerEntity> workers = workerRepository.findByCardId(cardId);
+
+        workers.forEach(t -> {
+            if (workerList.contains(t.getMemberId())) {
+                workerList.remove(t.getMemberId());
+            } else {
+                workerRepository.delete(t);
+            }
+        });
+
+        workerList.forEach(
+            t -> workerRepository.save(WorkerEntity.of(cardId, t))
+        );
+
+        List<Long> updateWorkers = workerRepository.findByCardId(cardId).stream()
+            .map(WorkerEntity::getMemberId)
+            .toList();
+
+        return new CardResponse(updateCard, updateWorkers);
+    }
+
 }

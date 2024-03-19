@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,4 +60,12 @@ public class CardEntity extends Timestamped {
             .build();
     }
 
+    public void updateCard(CardRequest request) {
+        this.title = Objects.requireNonNullElse(request.getTitle(), this.title);
+        this.description = Objects.requireNonNullElse(request.getDescription(), this.description);
+        this.backgroundColor = Objects.requireNonNullElse(request.getBackgroundColor(),
+            this.backgroundColor);
+        this.deadline = Objects.requireNonNullElse(request.getDeadline(), this.deadline);
+        this.startAt = Objects.requireNonNullElse(request.getStartAt(), this.startAt);
+    }
 }
