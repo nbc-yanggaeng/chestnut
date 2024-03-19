@@ -19,7 +19,7 @@ import org.spring.chestnut.global.entity.Timestamped;
 @Getter
 @Entity
 @Table(name = "columns")
-@SQLDelete(sql = "update column set deleted_at = NOW() where id = ?")
+@SQLDelete(sql = "update columns set deleted_at = NOW() where id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 @NoArgsConstructor
 public class ColumnEntity extends Timestamped {
