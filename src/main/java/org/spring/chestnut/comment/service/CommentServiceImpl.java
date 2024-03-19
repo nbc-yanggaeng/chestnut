@@ -8,8 +8,10 @@ import org.spring.chestnut.comment.entity.CommentEntity;
 import org.spring.chestnut.comment.repository.CommentRepository;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -44,7 +46,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentResponse> getComments(Long cardId, UserDetailsImpl userDetails) {
-        return commentRepository.findByCardId(cardId);
+        List<CommentEntity> comments = commentRepository.findByCardId(cardId);
+
+        return comments.stream()
+            .map(CommentResponse::new)
+            .toList();
     }
 }
