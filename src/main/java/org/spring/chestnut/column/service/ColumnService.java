@@ -1,5 +1,7 @@
 package org.spring.chestnut.column.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.entity.BoardEntity;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
@@ -52,5 +54,38 @@ public class ColumnService {
 
     public void deleteColumn(Long columnId) {
         columnRepository.deleteById(columnId);
+    }
+
+    public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
+        ColumnEntity columnToMove = columnRepository.findById(columnId)
+            .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
+
+        Integer oldSequence = columnToMove.getSequence();
+        List<ColumnEntity> columnsToShiftLeft = new ArrayList<>();
+        List<ColumnEntity> columnsToShiftRight = new ArrayList<>();
+
+        // 새 순서가 이전 순서보다 큰 경우, 사이에 있는 칼럼들의 순서를 1씩 감소
+        if (newSequence > oldSequence) {
+            columnsToShiftLeft = columnRepository.findBySequenceBetween(
+                oldSequence + 1, newSequence);
+            for (ColumnEntity column : columnsToShiftLeft) {
+                column.setSequence(column.getSequence() - 1);
+            }
+        }
+        // 새 순서가 이전 순서보다 작은 경우, 사이에 있는 칼럼들의 순서를 1씩 증가
+        else if (newSequence < oldSequence) {
+            columnsToShiftRight = columnRepository.findBySequenceBetween(
+                newSequence, oldSequence - 1);
+            for (ColumnEntity column : columnsToShiftRight) {
+                column.setSequence(column.getSequence() + 1);
+            }
+        }
+        // 칼럼 순서 업데이트
+        columnToMove.setSequence(newSequence);
+        columnRepository.saveAll(columnsToShiftLeft);
+        columnRepository.saveAll(columnsToShiftRight);
+        columnRepository.save(columnToMove);
+
+        return columnToMove;
     }
 }

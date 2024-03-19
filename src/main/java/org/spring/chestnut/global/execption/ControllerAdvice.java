@@ -18,5 +18,4 @@ public class ControllerAdvice {
                 .message(e.getMessage())
                 .build());
     }
-
 }

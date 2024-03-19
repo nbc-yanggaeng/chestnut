@@ -38,14 +38,14 @@ public class ColumnEntity extends Timestamped {
     private Long boardId;
 
 
-    public static ColumnEntity of(String title, Integer sequence){
+    public static ColumnEntity of(String title, Integer sequence) {
         return ColumnEntity.builder()
             .title(title)
             .sequence(sequence)
             .build();
     }
 
-    public ColumnEntity(String title, Integer sequence, Long boardId){
+    public ColumnEntity(String title, Integer sequence, Long boardId) {
         this.title = title;
         this.sequence = sequence;
         this.boardId = boardId;

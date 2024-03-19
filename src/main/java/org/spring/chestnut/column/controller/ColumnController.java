@@ -73,5 +73,22 @@ public class ColumnController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("columns/{columnId}/{sequence}")
+    public ResponseEntity<ResponseDto<ColumnResponseDto>> updateSecuence(
+        @PathVariable("columnId") Long columnId,
+        @PathVariable("sequence") Integer sequence
+    ) {
 
+        ColumnEntity updatedColumn = columnService.updateSecuence(columnId, sequence);
+
+        ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
+            updatedColumn.getTitle(), updatedColumn.getSequence());
+
+        return ResponseEntity.ok().body(
+            ResponseDto.<ColumnResponseDto>builder()
+                .message("컬럼 순서를 수정했습니다.")
+                .data(columnResponseDto)
+                .build()
+        );
+    }
 }
