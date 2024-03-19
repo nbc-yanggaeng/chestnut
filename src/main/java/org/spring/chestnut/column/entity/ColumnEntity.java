@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.spring.chestnut.global.entity.Timestamped;
 
-
+@Builder
+@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "columns")
@@ -35,11 +37,25 @@ public class ColumnEntity extends Timestamped {
     @Column(nullable = false)
     private Long boardId;
 
-    @Builder
+
     public static ColumnEntity of(String title, Integer sequence){
         return ColumnEntity.builder()
             .title(title)
             .sequence(sequence)
             .build();
+    }
+
+    public ColumnEntity(String title, Integer sequence, Long boardId){
+        this.title = title;
+        this.sequence = sequence;
+        this.boardId = boardId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setSequence(Integer newSequence) {
+        this.sequence = newSequence;
     }
 }

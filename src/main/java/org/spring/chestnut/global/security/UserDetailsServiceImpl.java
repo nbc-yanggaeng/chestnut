@@ -2,7 +2,6 @@ package org.spring.chestnut.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.member.entity.MemberEntity;
-import org.spring.chestnut.member.repository.MemberJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
