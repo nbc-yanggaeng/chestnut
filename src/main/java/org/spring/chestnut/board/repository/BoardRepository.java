@@ -1,8 +1,11 @@
 package org.spring.chestnut.board.repository;
 
+import org.spring.chestnut.board.dto.request.BoardDto;
 import org.spring.chestnut.board.entity.BoardEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
+public interface BoardRepository {
 
+    BoardEntity save(BoardDto boardDto);
+
+    BoardEntity findBoard(Long boardId);
 }
