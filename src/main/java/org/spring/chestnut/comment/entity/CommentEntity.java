@@ -46,4 +46,8 @@ public class CommentEntity extends Timestamped {
             .memberId(memberId)
             .build();
     }
+
+    public void updateComment(CommentRequest request) {
+        this.content = request.getContent();
+    }
 }

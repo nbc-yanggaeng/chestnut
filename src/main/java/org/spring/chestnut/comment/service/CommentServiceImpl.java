@@ -22,4 +22,23 @@ public class CommentServiceImpl implements CommentService {
 
         return new CommentResponse(commentRepository.save(comment));
     }
+
+    @Override
+    public CommentResponse updateComment(Long commentId, CommentRequest request,
+        UserDetailsImpl userDetails) {
+
+        CommentEntity comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new NullPointerException("없는 댓글 입니다"));
+
+        comment.updateComment(request);
+        return new CommentResponse(commentRepository.saveAndFlush(comment));
+    }
+
+    @Override
+    public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
+        CommentEntity comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new NullPointerException("없는 댓글 입니다"));
+
+        commentRepository.delete(comment);
+    }
 }

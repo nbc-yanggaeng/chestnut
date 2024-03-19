@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,30 @@ public class CommentController {
         CommentResponse response = commentService.createComment(cardId, request, userDetails);
 
         return ResponseDto.ok("댓글 작성 성공", response);
+    }
+
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<ResponseDto<CommentResponse>> updateComment(
+        @PathVariable Long commentId,
+        @RequestBody CommentRequest request,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        CommentResponse response = commentService.updateComment(commentId, request,
+            userDetails);
+
+        return ResponseDto.ok("댓글 수정 성공", response);
+    }
+
+    @PutMapping("/comments/{commentId}")
+    public ResponseEntity<ResponseDto<CommentResponse>> deleteComment(
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        commentService.deleteComment(commentId, userDetails);
+
+        return ResponseDto.ok("댓글 삭제 성공", null);
     }
 
 }
