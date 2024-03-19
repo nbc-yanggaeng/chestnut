@@ -10,4 +10,6 @@ public interface ColumnRepository extends JpaRepository<ColumnEntity, Long> {
     Optional<Integer> findLastSequenceByBoardId(Long boardId);
 
     List<ColumnEntity> findBySequenceBetween(int i, Integer newSequence);
+
+    List<ColumnEntity> findAllByColumnEntity(ColumnEntity columnEntity);
 }

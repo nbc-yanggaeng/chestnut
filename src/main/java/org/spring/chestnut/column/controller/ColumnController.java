@@ -4,14 +4,16 @@ package org.spring.chestnut.column.controller;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.dto.ColumnResponseDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
-import org.spring.chestnut.column.service.ColumnService;
+import org.spring.chestnut.column.service.ColumnServiceImpl;
 import org.spring.chestnut.global.dto.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,11 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ColumnController {
 
-    private final ColumnService columnService;
+    private final ColumnServiceImpl columnServiceImpl;
 
     @Autowired
-    public ColumnController(ColumnService columnService) {
-        this.columnService = columnService;
+    public ColumnController(ColumnServiceImpl columnServiceImpl) {
+        this.columnServiceImpl = columnServiceImpl;
+    }
+
+    @GetMapping("columns")
+    public ResponseEntity<ResponseDto<List<ColumnListResponseDto>>> getColumn() {
+
+        List<ColumnListResponseDto> responseDto = columnServiceImpl.getColumn();
+
+        return ResponseEntity.ok().body(
+            ResponseDto.<List<ColumnListResponseDto>>builder()
+                .message("컬럼을 생성했습니다.")
+                .data(responseDto)
+                .build());
     }
 
     @PostMapping("boards/{boardId}/columns")
@@ -33,7 +47,7 @@ public class ColumnController {
         @PathVariable("boardId") Long boardId,
         ColumnRequestDto requestDto
     ) {
-        ColumnEntity createdColumn = columnService.createColumn(boardId, requestDto);
+        ColumnEntity createdColumn = columnServiceImpl.createColumn(boardId, requestDto);
 
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(createdColumn.getId(),
             createdColumn.getTitle(), createdColumn.getSequence());
@@ -52,7 +66,7 @@ public class ColumnController {
         @PathVariable("columnId") Long columnId,
         ColumnRequestDto requestDto
     ) {
-        ColumnEntity updatedColumn = columnService.updateColumn(columnId, requestDto);
+        ColumnEntity updatedColumn = columnServiceImpl.updateColumn(columnId, requestDto);
 
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
@@ -69,7 +83,7 @@ public class ColumnController {
 
     @DeleteMapping("columns/{columnId}")
     public ResponseEntity<Void> deleteColumn(@PathVariable Long columnId) {
-        columnService.deleteColumn(columnId);
+        columnServiceImpl.deleteColumn(columnId);
         return ResponseEntity.noContent().build();
     }
 
@@ -79,7 +93,7 @@ public class ColumnController {
         @PathVariable("sequence") Integer sequence
     ) {
 
-        ColumnEntity updatedColumn = columnService.updateSecuence(columnId, sequence);
+        ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, sequence);
 
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
