@@ -34,10 +34,6 @@ public class CardEntity extends Timestamped {
     @Column(nullable = false)
     private Long columnId;
 
-    @ElementCollection
-    @Column(name = "member_id")
-    private List<Long> memberIds = new ArrayList<>();
-
     @Column(nullable = false, length = 50)
     private String title;
 
