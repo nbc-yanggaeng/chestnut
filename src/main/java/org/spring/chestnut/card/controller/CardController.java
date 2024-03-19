@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
-import org.spring.chestnut.card.dto.WorkerRequest;
+import org.spring.chestnut.card.dto.WorKerRequest;
 import org.spring.chestnut.card.service.CardService;
 import org.spring.chestnut.global.dto.ResponseDto;
 import org.spring.chestnut.global.security.UserDetailsImpl;
@@ -31,12 +31,10 @@ public class CardController {
         @PathVariable Long boardId,
         @PathVariable Long columnId,
         @Valid @RequestBody CardRequest cardRequest,
-        @RequestBody WorkerRequest workerRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-
         CardResponse cardResponse = cardService.createCard(boardId, columnId, cardRequest,
-            workerRequest, userDetails);
+            userDetails);
 
         return ResponseDto.ok("카드 생성 성공", cardResponse);
     }
@@ -44,13 +42,11 @@ public class CardController {
     @PutMapping("/cards/{cardId}")
     public ResponseEntity<ResponseDto<CardResponse>> updateCard(
         @PathVariable Long cardId,
-        @RequestBody CardRequest cardRequest,
-        @RequestBody WorkerRequest workerRequest,
+        @Valid @RequestBody CardRequest cardRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        CardResponse response = cardService.updateCard(cardId, cardRequest, workerRequest,
-            userDetails);
+        CardResponse response = cardService.updateCard(cardId, cardRequest, userDetails);
 
         return ResponseDto.ok("카드 수정 성공", response);
     }
@@ -82,6 +78,17 @@ public class CardController {
         List<CardResponse> responseList = cardService.getCardsByColumnId(columnId);
 
         return ResponseDto.ok("카드 조회 성공", responseList);
+    }
+
+    @PostMapping("/cards/{cardId}/workers")
+    public ResponseEntity<ResponseDto<CardResponse>> updateWorkers(
+        @PathVariable Long cardId,
+        @RequestBody WorKerRequest worKerRequest,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        CardResponse response = cardService.updateWorkers(cardId, worKerRequest, userDetails);
+
+        return ResponseDto.ok("작업자 수정 완료", response);
     }
 
 }

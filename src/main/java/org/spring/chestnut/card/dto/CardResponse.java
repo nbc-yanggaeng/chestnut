@@ -19,6 +19,14 @@ public class CardResponse {
     private LocalDateTime startAt;
     private List<Long> workerResponse;
 
+    public CardResponse(CardEntity card) {
+        this.title = card.getTitle();
+        this.description = card.getDescription();
+        this.backgroundColor = card.getBackgroundColor();
+        this.deadline = card.getDeadline();
+        this.startAt = card.getStartAt();
+    }
+
     public CardResponse(CardEntity card, List<Long> workerResponse) {
         this.title = card.getTitle();
         this.description = card.getDescription();

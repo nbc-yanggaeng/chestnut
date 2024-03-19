@@ -32,7 +32,7 @@ public class JwtProvider {
   private static final String BEARER_PREFIX = "Bearer ";
   private static final Integer BEARER_PREFIX_LENGTH = 7;
   private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
-  private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 20;
+  private static final Long ACCESS_TOKEN_VALID_TIME = (60 * 1000L) * 60;
   private static final Long REFRESH_TOKEN_VALID_TIME = (60 * 1000L) * 60 * 24;
 
   @Value("${jwt.secret_key}")
