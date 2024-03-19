@@ -8,6 +8,8 @@ public interface WorkerRepository extends JpaRepository<WorkerEntity, Long> {
 
     List<WorkerEntity> findByCardId(Long cardId);
 
+    List<WorkerEntity> findByCardIdOrderByMemberId(Long cardId);
+
     void deleteByCardId(Long cardId);
-    
+
 }

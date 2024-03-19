@@ -118,7 +118,7 @@ public class CardServiceImpl implements CardService {
         CardEntity card = cardRepository.findById(cardId)
             .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
 
-        List<WorkerEntity> workerLists = workerRepository.findByCardId(cardId);
+        List<WorkerEntity> workerLists = workerRepository.findByCardIdOrderByMemberId(cardId);
 
         List<Long> collect = workerLists.stream()
             .map(WorkerEntity::getMemberId)

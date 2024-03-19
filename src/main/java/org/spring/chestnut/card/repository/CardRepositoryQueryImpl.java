@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.entity.CardEntity;
-import org.spring.chestnut.card.entity.WorkerEntity;
 
 @RequiredArgsConstructor
 public class CardRepositoryQueryImpl implements CardRepositoryQuery {
@@ -23,13 +22,12 @@ public class CardRepositoryQueryImpl implements CardRepositoryQuery {
     public List<CardResponse> findAllCardsByColumnId(Long columnId) {
 
         List<Tuple> query = factory.select(cardEntity, workerEntity)
-            .from(cardEntity, workerEntity)
-            .where(
-                cardEntity.columnId.eq(columnId)
-                    .and(cardEntity.id.eq(workerEntity.cardId))
-            )
+            .from(cardEntity)
+            .leftJoin(workerEntity).on(cardEntity.id.eq(workerEntity.cardId))
+            .where(cardEntity.columnId.eq(columnId))
             .orderBy(cardEntity.deadline.desc())
             .orderBy(cardEntity.createdAt.asc())
+            .orderBy(workerEntity.memberId.asc())
             .fetch();
 
         return query.stream()
@@ -45,7 +43,7 @@ public class CardRepositoryQueryImpl implements CardRepositoryQuery {
             .map(entry -> {
                 CardEntity card = entry.getKey();
                 List<Long> workers = entry.getValue().stream()
-                    .map(WorkerEntity::getMemberId)
+                    .map(worker -> worker != null ? worker.getMemberId() : null)
                     .toList();
 
                 return new CardResponse(card, workers);

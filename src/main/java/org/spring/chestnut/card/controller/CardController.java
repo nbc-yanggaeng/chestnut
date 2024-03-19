@@ -77,7 +77,7 @@ public class CardController {
     ) {
         List<CardResponse> responseList = cardService.getCardsByColumnId(columnId);
 
-        return ResponseDto.ok("카드 조회 성공", responseList);
+        return ResponseDto.ok("카드 전체 조회 성공", responseList);
     }
 
     @PostMapping("/cards/{cardId}/workers")
