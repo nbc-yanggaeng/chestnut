@@ -1,8 +1,11 @@
 package org.spring.chestnut.member.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.jwt.JwtProvider;
+import org.spring.chestnut.global.jwt.entity.RefreshTokenEntity;
 import org.spring.chestnut.global.jwt.repository.TokenRepository;
+import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.spring.chestnut.member.dto.request.LoginRequestDto;
 import org.spring.chestnut.member.dto.request.SignupDto;
 import org.spring.chestnut.member.dto.request.SignupRequestDto;
@@ -48,6 +51,15 @@ public class MemberServiceImpl implements MemberService{
 
     String token = generateToken(member.getId());
     return new LoginResponseDto(member.getEmail(), token);
+  }
+
+  @Override
+  @Transactional
+  public void logout(UserDetailsImpl userDetails) {
+    List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByMemberId(
+        userDetails.getMemberId());
+
+    refreshTokenEntityList.forEach(tokenRepository::deleteToken);
   }
 
   private String generateToken(Long memberId) {
