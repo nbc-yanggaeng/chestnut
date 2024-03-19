@@ -32,12 +32,12 @@ public class BoardServiceImpl implements BoardService{
         BoardDto boardDto = new BoardDto(requestDto.getTitle(), requestDto.getBackgroundColor(), description, memberId);
         BoardEntity board = boardRepository.save(boardDto);
 
-//        // Collaborator 에 Board 생성자 추가
-//        CollaboratorEntity collaborator = CollaboratorEntity.of(
-//            board.getId(),
-//            memberId
-//        );
-//        collaboratorRepository.save(collaborator);
+        // Collaborator 에 Board 생성자 추가
+        CollaboratorEntity collaborator = CollaboratorEntity.of(
+            board.getId(),
+            memberId
+        );
+        collaboratorRepository.save(collaborator);
     }
 
     @Override
