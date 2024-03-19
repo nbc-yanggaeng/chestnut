@@ -9,14 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserDetailsImpl implements UserDetails {
 
-  private final MemberEntity member;
+  private final Long memberId;
 
-  public UserDetailsImpl(MemberEntity member) {
-    this.member = member;
+  public UserDetailsImpl(Long memberId) {
+    this.memberId = memberId;
   }
 
-  public MemberEntity getMember() {
-    return member;
+  public Long getMemberId() {
+    return memberId;
   }
 
   @Override
@@ -30,12 +30,12 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public String getPassword() {
-    return member.getPassword();
+    return null;
   }
 
   @Override
   public String getUsername() {
-    return member.getEmail();
+    return null;
   }
 
   @Override

@@ -3,7 +3,6 @@ package org.spring.chestnut.global.config;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.jwt.JwtProvider;
 import org.spring.chestnut.global.jwt.repository.TokenRepository;
-import org.spring.chestnut.global.security.JwtAuthenticationFilter;
 import org.spring.chestnut.global.security.JwtAuthorizationFilter;
 import org.spring.chestnut.global.security.UserDetailsServiceImpl;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -25,19 +24,11 @@ public class SecurityConfig {
   private final JwtProvider jwtProvider;
   private final TokenRepository tokenRepository;
   private final UserDetailsServiceImpl userDetailsService;
-  private final AuthenticationConfiguration authenticationConfiguration;
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
       throws Exception {
     return configuration.getAuthenticationManager();
-  }
-
-  @Bean
-  public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtProvider, tokenRepository);
-    filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
-    return filter;
   }
 
   @Bean
@@ -63,8 +54,7 @@ public class SecurityConfig {
             .anyRequest().authenticated() // 그 외 모든 요청 인증처리
     );
 
-    http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-    http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

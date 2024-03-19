@@ -47,29 +47,29 @@ public class JwtProvider {
   }
 
   public String generateAccessToken(
-      final String email,
+      final Long memberId,
       final String role
   ) {
-    return generateToken(email, role, ACCESS_TOKEN_VALID_TIME);
+    return generateToken(String.valueOf(memberId), role, ACCESS_TOKEN_VALID_TIME);
   }
 
   @Transactional
   public String generateRefreshToken(
-      final String email,
+      final Long memberId,
       final String role
   ) {
-    return generateRefreshToken(email, role, REFRESH_TOKEN_VALID_TIME);
+    return generateRefreshToken(String.valueOf(memberId), role, REFRESH_TOKEN_VALID_TIME);
   }
 
   public String generateToken(
-      final String info,
+      final String id,
       final String role,
       Long time
   ) {
     Date now = new Date();
     return BEARER_PREFIX +
         Jwts.builder()
-            .setSubject(info)
+            .setSubject(id)
             .claim(AUTHORIZATION_KEY, role)
             .setExpiration(new Date(now.getTime() + time))
             .setIssuedAt(now)
@@ -78,14 +78,14 @@ public class JwtProvider {
   }
 
   public String generateRefreshToken(
-      final String info,
+      final String id,
       final String role,
       Long time
   ) {
     Date now = new Date();
     return BEARER_PREFIX +
         Jwts.builder()
-            .setSubject(info)
+            .setSubject(id)
             .claim(AUTHORIZATION_KEY, role)
             .setExpiration(new Date(now.getTime() + time))
             .setIssuedAt(now)
