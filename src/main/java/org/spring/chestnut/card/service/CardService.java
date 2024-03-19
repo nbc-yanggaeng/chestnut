@@ -1,5 +1,6 @@
 package org.spring.chestnut.card.service;
 
+import java.util.List;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.dto.WorkerRequest;
@@ -16,4 +17,6 @@ public interface CardService {
     void deleteCard(Long cardId, UserDetails member);
 
     CardResponse getCardByCardId(Long cardId);
+
+    List<CardResponse> getCardsByColumnId(Long columnId);
 }

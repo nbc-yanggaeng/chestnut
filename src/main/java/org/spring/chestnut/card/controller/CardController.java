@@ -2,6 +2,7 @@ package org.spring.chestnut.card.controller;
 
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
@@ -72,6 +73,15 @@ public class CardController {
         CardResponse response = cardService.getCardByCardId(cardId);
 
         return ResponseDto.ok("카드 조회 성공", response);
+    }
+
+    @GetMapping("/column/{columnId}/cards")
+    public ResponseEntity<ResponseDto<List<CardResponse>>> getCardsByColumnId(
+        @PathVariable Long columnId
+    ) {
+        List<CardResponse> responseList = cardService.getCardsByColumnId(columnId);
+
+        return ResponseDto.ok("카드 조회 성공", responseList);
     }
 
 }

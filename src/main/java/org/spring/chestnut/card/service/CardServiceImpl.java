@@ -96,4 +96,10 @@ public class CardServiceImpl implements CardService {
         return new CardResponse(cardEntity, workers);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<CardResponse> getCardsByColumnId(Long columnId) {
+        return cardRepository.findAllCardsByColumnId(columnId);
+    }
+
 }
