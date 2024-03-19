@@ -1,5 +1,6 @@
 package org.spring.chestnut.global.jwt.repository;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.jwt.entity.RefreshTokenEntity;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,12 @@ public class TokenRepositoryImpl implements TokenRepository{
   }
 
   @Override
+  public List<RefreshTokenEntity> findAllByMemberId(Long memberId) {
+    return refreshTokenJpaRepository.findAllByMemberId(memberId);
+  }
+
+  @Override
   public void deleteToken(RefreshTokenEntity token) {
-    refreshTokenJpaRepository.deleteByToken(token.getToken());
+    refreshTokenJpaRepository.delete(token);
   }
 }
