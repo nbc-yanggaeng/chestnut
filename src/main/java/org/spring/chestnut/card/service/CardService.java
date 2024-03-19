@@ -1,6 +1,7 @@
 package org.spring.chestnut.card.service;
 
 import java.util.List;
+import org.spring.chestnut.card.dto.CardMoveRequest;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.dto.WorKerRequest;
@@ -20,5 +21,8 @@ public interface CardService {
 
     List<CardResponse> getCardsByColumnId(Long columnId);
 
-    CardResponse updateWorkers(Long cardId, WorKerRequest worKerRequest, UserDetailsImpl userDetails);
+    CardResponse updateWorkers(Long cardId, WorKerRequest worKerRequest,
+        UserDetailsImpl userDetails);
+
+    CardResponse moveCard(Long cardId, CardMoveRequest request, UserDetailsImpl userDetails);
 }

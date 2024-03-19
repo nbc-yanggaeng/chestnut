@@ -12,6 +12,8 @@ import org.spring.chestnut.card.entity.CardEntity;
 @Getter
 public class CardResponse {
 
+    private Long cardId;
+    private Long columnId;
     private String title;
     private String description;
     private String backgroundColor;
@@ -20,6 +22,8 @@ public class CardResponse {
     private List<Long> workerResponse;
 
     public CardResponse(CardEntity card) {
+        this.cardId = card.getId();
+        this.columnId = card.getColumnId();
         this.title = card.getTitle();
         this.description = card.getDescription();
         this.backgroundColor = card.getBackgroundColor();
@@ -28,6 +32,8 @@ public class CardResponse {
     }
 
     public CardResponse(CardEntity card, List<Long> workerResponse) {
+        this.cardId = card.getId();
+        this.columnId = card.getColumnId();
         this.title = card.getTitle();
         this.description = card.getDescription();
         this.backgroundColor = card.getBackgroundColor();

@@ -3,6 +3,7 @@ package org.spring.chestnut.card.service;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.card.dto.CardMoveRequest;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.dto.WorKerRequest;
@@ -47,36 +48,6 @@ public class CardServiceImpl implements CardService {
         List<Long> workerList = workerRepository.findByCardId(cardId).stream()
             .map(WorkerEntity::getMemberId)
             .toList();
-
-//        List<Long> collect = workerLists.stream()
-//            .map(WorkerEntity::getMemberId)
-//            .toList();
-
-//        if (workerRequest != null) {
-//            if (new HashSet<>(collect).containsAll(workerRequest.getWorkerList())) {
-//                throw new IllegalArgumentException("이미 있는 작업자입니다.");
-//            } else {
-//                workerRequest.getWorkerList()
-//                    .forEach(
-//                        t -> workerRepository.save(WorkerEntity.of(cardId, t))
-//                    );
-//            }
-//        }
-//
-//        if (workerDeleteRequest != null) {
-//            if (!new HashSet<>(collect).containsAll(
-//                workerDeleteRequest.getWorkerList())) {
-//                throw new IllegalArgumentException("없는 작업자입니다.");
-//            } else {
-//                workerLists.stream().filter(
-//                    t -> workerDeleteRequest.getWorkerList().contains(t.getMemberId())
-//                ).forEach(workerRepository::delete);
-//            }
-//        }
-//
-//        List<Long> updateWorkers = workerRepository.findByCardId(cardId).stream()
-//            .map(WorkerEntity::getMemberId)
-//            .toList();
 
         return new CardResponse(updateCard, workerList);
     }
@@ -129,10 +100,9 @@ public class CardServiceImpl implements CardService {
             if (new HashSet<>(collect).containsAll(addRequest)) {
                 throw new IllegalArgumentException("이미 있는 작업자입니다.");
             } else {
-                addRequest
-                    .forEach(
-                        t -> workerRepository.save(WorkerEntity.of(cardId, t))
-                    );
+                addRequest.forEach(
+                    t -> workerRepository.save(WorkerEntity.of(cardId, t))
+                );
             }
         }
 
@@ -152,6 +122,23 @@ public class CardServiceImpl implements CardService {
             .toList();
 
         return new CardResponse(card, updateWorkers);
+    }
+
+    @Override
+    public CardResponse moveCard(Long cardId, CardMoveRequest request,
+        UserDetailsImpl userDetails) {
+
+        CardEntity card = cardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+
+        card.moveCard(request.getMoveTo());
+        CardEntity save = cardRepository.save(card);
+
+        List<Long> workers = workerRepository.findByCardId(cardId)
+            .stream().map(WorkerEntity::getMemberId)
+            .toList();
+
+        return new CardResponse(save, workers);
     }
 
 }

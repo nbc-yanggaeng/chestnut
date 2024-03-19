@@ -4,6 +4,7 @@ package org.spring.chestnut.card.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.card.dto.CardMoveRequest;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.dto.WorKerRequest;
@@ -89,6 +90,17 @@ public class CardController {
         CardResponse response = cardService.updateWorkers(cardId, worKerRequest, userDetails);
 
         return ResponseDto.ok("작업자 수정 완료", response);
+    }
+
+    @PostMapping("/cards/{cardId}/move")
+    public ResponseEntity<ResponseDto<CardResponse>> moveCard(
+        @PathVariable Long cardId,
+        @RequestBody CardMoveRequest request,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        CardResponse response = cardService.moveCard(cardId, request, userDetails);
+
+        return ResponseDto.ok("카드 위치 변경완료", response);
     }
 
 }

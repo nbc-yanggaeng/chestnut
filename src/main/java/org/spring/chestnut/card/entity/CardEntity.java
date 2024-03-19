@@ -62,13 +62,21 @@ public class CardEntity extends Timestamped {
 
     public void updateCard(CardRequest request) {
         this.title = Objects.requireNonNullElse(request.getTitle(), this.title);
-        this.description = Objects.requireNonNullElse(request.getDescription(), this.description);
-        this.backgroundColor = Objects.requireNonNullElse(request.getBackgroundColor(),
-            this.backgroundColor);
-        if (request.getDeadline() != null)
+        if (request.getDescription() != null) {
+            this.description = request.getDescription();
+        }
+        if (request.getBackgroundColor() != null) {
+            this.backgroundColor = request.getBackgroundColor();
+        }
+        if (request.getDeadline() != null) {
             this.deadline = request.getDeadline();
+        }
         if (request.getStartAt() != null) {
             this.startAt = request.getStartAt();
         }
+    }
+
+    public void moveCard(Long moveTo) {
+        this.columnId = moveTo;
     }
 }
