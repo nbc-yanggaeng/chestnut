@@ -1,8 +1,12 @@
 package org.spring.chestnut.member.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.dto.ResponseDto;
+import org.spring.chestnut.global.jwt.JwtProvider;
+import org.spring.chestnut.member.dto.request.LoginRequestDto;
 import org.spring.chestnut.member.dto.request.SignupRequestDto;
+import org.spring.chestnut.member.dto.response.LoginResponseDto;
 import org.spring.chestnut.member.dto.response.MemberResponseDto;
 import org.spring.chestnut.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +29,14 @@ public class MemberController {
   ) {
     MemberResponseDto responseDto = memberService.signup(dto);
     return ResponseDto.ok("회원 가입에 성공하였습니다.", responseDto);
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<ResponseDto<String>> login(
+      @Validated @RequestBody LoginRequestDto dto, HttpServletResponse response
+  ) {
+    LoginResponseDto responseDto = memberService.login(dto);
+    response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, responseDto.getToken());
+    return ResponseDto.ok("로그인에 성공하였습니다.", responseDto.getUsername());
   }
 }
