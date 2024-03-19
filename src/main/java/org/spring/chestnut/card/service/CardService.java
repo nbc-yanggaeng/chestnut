@@ -14,4 +14,6 @@ public interface CardService {
         UserDetails member);
 
     void deleteCard(Long cardId, UserDetails member);
+
+    CardResponse getCardByCardId(Long cardId);
 }

@@ -12,6 +12,7 @@ import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,6 +63,15 @@ public class CardController {
         cardService.deleteCard(cardId, userDetails);
 
         return ResponseDto.ok("카드 삭제 성공", null);
+    }
+
+    @GetMapping("/cards/{cardId}")
+    public ResponseEntity<ResponseDto<CardResponse>> getCardByCardId(
+        @PathVariable Long cardId
+    ) {
+        CardResponse response = cardService.getCardByCardId(cardId);
+
+        return ResponseDto.ok("카드 조회 성공", response);
     }
 
 }

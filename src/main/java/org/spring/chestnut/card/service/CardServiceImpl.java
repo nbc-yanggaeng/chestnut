@@ -82,4 +82,18 @@ public class CardServiceImpl implements CardService {
         workerRepository.deleteByCardId(cardId);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public CardResponse getCardByCardId(Long cardId) {
+
+        CardEntity cardEntity = cardRepository.findById(cardId)
+            .orElseThrow(() -> new NullPointerException("없는 카드입니다."));
+
+        List<Long> workers = workerRepository.findByCardId(cardId).stream()
+            .map(WorkerEntity::getMemberId)
+            .toList();
+
+        return new CardResponse(cardEntity, workers);
+    }
+
 }
