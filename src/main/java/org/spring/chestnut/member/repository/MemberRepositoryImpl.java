@@ -32,4 +32,9 @@ public class MemberRepositoryImpl implements MemberRepository {
   public Optional<MemberEntity> findByEmail(String email) {
     return memberJpaRepository.findByEmail(email);
   }
+
+  @Override
+  public Optional<MemberEntity> findByMemberId(Long memberId) {
+    return memberJpaRepository.findById(memberId);
+  }
 }

@@ -12,4 +12,6 @@ public interface MemberRepository {
   MemberResponseDto signup(SignupDto dto);
 
   Optional<MemberEntity> findByEmail(String email);
+
+  Optional<MemberEntity> findByMemberId(Long memberId);
 }

@@ -7,6 +7,7 @@ import org.spring.chestnut.global.jwt.JwtProvider;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.spring.chestnut.member.dto.request.LoginRequestDto;
 import org.spring.chestnut.member.dto.request.SignupRequestDto;
+import org.spring.chestnut.member.dto.request.UpdateRequestDto;
 import org.spring.chestnut.member.dto.response.LoginResponseDto;
 import org.spring.chestnut.member.dto.response.MemberResponseDto;
 import org.spring.chestnut.member.service.MemberService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,10 +45,19 @@ public class MemberController {
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<ResponseDto<String>> logout(
+  public ResponseEntity<ResponseDto<Void>> logout(
       @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
     memberService.logout(userDetails);
     return ResponseDto.ok("로그아웃에 성공하였습니다.", null);
+  }
+
+  @PutMapping
+  public ResponseEntity<ResponseDto<Void>> updatePassword(
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @RequestBody UpdateRequestDto dto
+  ) {
+    memberService.updatePassword(userDetails.getMemberId(), dto);
+    return ResponseDto.ok("회원의 비밀번호를 수정하였습니다.", null);
   }
 }
