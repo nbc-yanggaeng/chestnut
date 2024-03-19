@@ -1,5 +1,6 @@
 package org.spring.chestnut.comment.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.comment.dto.CommentResponse;
@@ -40,5 +41,10 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new NullPointerException("없는 댓글 입니다"));
 
         commentRepository.delete(comment);
+    }
+
+    @Override
+    public List<CommentResponse> getComments(Long cardId, UserDetailsImpl userDetails) {
+        return commentRepository.findByCardId(cardId);
     }
 }

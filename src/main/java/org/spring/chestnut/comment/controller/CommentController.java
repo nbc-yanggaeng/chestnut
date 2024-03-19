@@ -1,5 +1,6 @@
 package org.spring.chestnut.comment.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.comment.dto.CommentResponse;
@@ -54,6 +55,17 @@ public class CommentController {
         commentService.deleteComment(commentId, userDetails);
 
         return ResponseDto.ok("댓글 삭제 성공", null);
+    }
+
+    @GetMapping("/cards/{cardId}/comments")
+    public ResponseEntity<ResponseDto<List<CommentResponse>>> getComment(
+        @PathVariable Long cardId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        List<CommentResponse> response = commentService.getComments(cardId, userDetails);
+
+        return ResponseDto.ok("댓글 삭제 성공", response);
     }
 
 }
