@@ -30,7 +30,7 @@ public class ColumnController {
         this.columnServiceImpl = columnServiceImpl;
     }
 
-    @GetMapping("columns")
+    @GetMapping("/columns")
     public ResponseEntity<ResponseDto<List<ColumnListResponseDto>>> getColumn() {
 
         List<ColumnListResponseDto> responseDto = columnServiceImpl.getColumn();
@@ -42,7 +42,7 @@ public class ColumnController {
                 .build());
     }
 
-    @PostMapping("boards/{boardId}/columns")
+    @PostMapping("/boards/{boardId}/columns")
     public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> createColumn(
         @PathVariable("boardId") Long boardId,
         ColumnRequestDto requestDto
@@ -61,7 +61,7 @@ public class ColumnController {
                 .build());
     }
 
-    @PutMapping("columns/{columnId}")
+    @PutMapping("/columns/{columnId}")
     public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> updateColumn(
         @PathVariable("columnId") Long columnId,
         ColumnRequestDto requestDto
@@ -80,7 +80,7 @@ public class ColumnController {
         );
     }
 
-    @DeleteMapping("columns/{columnId}")
+    @DeleteMapping("/columns/{columnId}")
     public ResponseEntity<Void> deleteColumn(
         @PathVariable Long columnId
     ) {
@@ -88,7 +88,7 @@ public class ColumnController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("columns/{columnId}/{sequence}")
+    @PutMapping("/columns/{columnId}/{sequence}")
     public ResponseEntity<ResponseDto<ColumnResponseDto>> updateSecuence(
         @PathVariable("columnId") Long columnId,
         @PathVariable("sequence") Integer sequence
