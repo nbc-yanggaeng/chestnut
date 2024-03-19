@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.entity.BoardEntity;
+import org.spring.chestnut.board.repository.BoardRepository;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.dto.ColumnResponseDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
-import org.spring.chestnut.column.reposiotry.BoardRepository;
 import org.spring.chestnut.column.reposiotry.ColumnRepository;
 import org.spring.chestnut.global.execption.ColumnNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,8 @@ public class ColumnServiceImpl implements ColumnService{
     private final ColumnRepository columnRepository;
     private final BoardRepository boardRepository;
 
-
-
-    @Transactional
     @Override
+    @Transactional
     public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto) {
         // boardId로 BoardEntity 존재 여부 확인
         BoardEntity board = boardRepository.findById(boardId)
@@ -45,8 +43,8 @@ public class ColumnServiceImpl implements ColumnService{
         return columnRepository.save(newColumn);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto) {
         ColumnEntity column = columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
@@ -55,14 +53,14 @@ public class ColumnServiceImpl implements ColumnService{
         return columnRepository.save(column);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void deleteColumn(Long columnId) {
         columnRepository.deleteById(columnId);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
         ColumnEntity columnToMove = columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));

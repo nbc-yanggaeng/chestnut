@@ -7,15 +7,9 @@ import org.spring.chestnut.column.entity.ColumnEntity;
 
 public interface ColumnService {
 
-    public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto);
-
-
-    public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto);
-
-
-    public ColumnEntity updateSecuence(Long columnId, Integer newSequence);
-
-    public void deleteColumn(Long columnId);
-
-    public List<ColumnListResponseDto> getColumn();
+    ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto);
+    ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto);
+    ColumnEntity updateSecuence(Long columnId, Integer newSequence);
+    void deleteColumn(Long columnId);
+    List<ColumnListResponseDto> getColumn();
 }

@@ -67,7 +67,6 @@ public class ColumnController {
         ColumnRequestDto requestDto
     ) {
         ColumnEntity updatedColumn = columnServiceImpl.updateColumn(columnId, requestDto);
-
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
@@ -82,7 +81,9 @@ public class ColumnController {
     }
 
     @DeleteMapping("columns/{columnId}")
-    public ResponseEntity<Void> deleteColumn(@PathVariable Long columnId) {
+    public ResponseEntity<Void> deleteColumn(
+        @PathVariable Long columnId
+    ) {
         columnServiceImpl.deleteColumn(columnId);
         return ResponseEntity.noContent().build();
     }
@@ -92,9 +93,7 @@ public class ColumnController {
         @PathVariable("columnId") Long columnId,
         @PathVariable("sequence") Integer sequence
     ) {
-
         ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, sequence);
-
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
