@@ -51,7 +51,7 @@ public class ColumnController {
     public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> updateColumn(
         @PathVariable("columnId") Long columnId,
         ColumnRequestDto requestDto
-    ){
+    ) {
         ColumnEntity updatedColumn = columnService.updateColumn(columnId, requestDto);
 
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
@@ -67,11 +67,8 @@ public class ColumnController {
         );
     }
 
-
-
-
     @DeleteMapping("columns/{columnId}")
-    public ResponseEntity<Void> deleteColumn(@PathVariable Long columnId){
+    public ResponseEntity<Void> deleteColumn(@PathVariable Long columnId) {
         columnService.deleteColumn(columnId);
         return ResponseEntity.noContent().build();
     }
