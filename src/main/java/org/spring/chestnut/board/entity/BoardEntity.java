@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import org.spring.chestnut.global.entity.Timestamped;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @SQLDelete(sql = "update board set deleted_at = NOW() where id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 @Table(name = "baord")
@@ -31,18 +34,18 @@ public class BoardEntity extends Timestamped {
     @Column(nullable = false)
     private String backgroundColor;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     private Long createMemberId;
 
-    @Builder
-    public static BoardEntity of(String title, String background_color, String description) {
+    public static BoardEntity of(String title, String backgroundColor, String description, Long memberId) {
         return BoardEntity.builder()
             .title(title)
-            .background_color(background_color)
+            .backgroundColor(backgroundColor)
             .description(description)
+            .createMemberId(memberId)
             .build();
     }
 }

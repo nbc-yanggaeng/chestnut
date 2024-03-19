@@ -1,10 +1,9 @@
-package org.spring.chestnut.member.dto;
+package org.spring.chestnut.member.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class LoginRequestDto {
 
   private String email;

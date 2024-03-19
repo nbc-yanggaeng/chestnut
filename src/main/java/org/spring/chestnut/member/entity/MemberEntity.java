@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,12 @@ import org.spring.chestnut.global.entity.Timestamped;
 
 @Getter
 @Entity
+@Builder
 @Table(name = "member")
 @SQLDelete(sql = "update member set deleted_at = NOW() where id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
 @NoArgsConstructor
+@AllArgsConstructor
 public class MemberEntity extends Timestamped {
 
     @Id
@@ -31,7 +34,6 @@ public class MemberEntity extends Timestamped {
     @Column(nullable = false)
     private String password;
 
-    @Builder
     public static MemberEntity of(String email, String password) {
         return MemberEntity.builder()
             .email(email)
