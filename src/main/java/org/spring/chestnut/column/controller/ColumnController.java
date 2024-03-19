@@ -31,20 +31,16 @@ public class ColumnController {
         this.columnServiceImpl = columnServiceImpl;
     }
 
-    @GetMapping("/columns")
-    public ResponseEntity<ResponseDto<List<ColumnListResponseDto>>> getColumn() {
-
-        List<ColumnListResponseDto> responseDto = columnServiceImpl.getColumn();
-
-        return ResponseEntity.ok().body(
-            ResponseDto.<List<ColumnListResponseDto>>builder()
-                .message("컬럼을 생성했습니다.")
-                .data(responseDto)
-                .build());
+    @GetMapping("/boards/{boardId}/columns")
+    public ResponseEntity<ResponseDto<ColumnListResponseDto>> getColumn(
+        @PathVariable("boardId") Long boardId
+    ) {
+        ColumnListResponseDto responseDto = columnServiceImpl.getColumn(boardId);
+        return ResponseDto.ok("컬럼 조회에 성공했습니다.", responseDto);
     }
 
     @PostMapping("/boards/{boardId}/columns")
-    public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> createColumn(
+    public ResponseEntity<ResponseDto<ColumnResponseDto>> createColumn(
         @PathVariable("boardId") Long boardId,
         @RequestBody ColumnRequestDto requestDto
     ) {
@@ -53,13 +49,7 @@ public class ColumnController {
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(createdColumn.getId(),
             createdColumn.getTitle(), createdColumn.getSequence());
 
-        List<ColumnResponseDto> columnList = Arrays.asList(columnResponseDto);
-
-        return ResponseEntity.ok()
-            .body(ResponseDto.<List<ColumnResponseDto>>builder()
-                .message("컬럼을 생성했습니다.")
-                .data(columnList)
-                .build());
+        return ResponseDto.ok("컬럼을 생성했습니다.", columnResponseDto);
     }
 
     @PutMapping("/columns/{columnId}")
@@ -73,12 +63,7 @@ public class ColumnController {
 
         List<ColumnResponseDto> columnList = Arrays.asList(columnResponseDto);
 
-        return ResponseEntity.ok().body(
-            ResponseDto.<List<ColumnResponseDto>>builder()
-                .message("컬럼을 수정했습니다.")
-                .data(columnList)
-                .build()
-        );
+        return ResponseDto.ok("컬럼을 수정했습니다.", columnList);
     }
 
     @DeleteMapping("/columns/{columnId}")
@@ -98,11 +83,6 @@ public class ColumnController {
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
-        return ResponseEntity.ok().body(
-            ResponseDto.<ColumnResponseDto>builder()
-                .message("컬럼 순서를 수정했습니다.")
-                .data(columnResponseDto)
-                .build()
-        );
+        return ResponseDto.ok("컬럼 순서를 수정했습니다.", columnResponseDto);
     }
 }
