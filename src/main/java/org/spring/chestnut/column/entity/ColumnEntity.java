@@ -29,7 +29,7 @@ public class ColumnEntity extends Timestamped {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private Integer sequence;
 
     @Column(nullable = false)
