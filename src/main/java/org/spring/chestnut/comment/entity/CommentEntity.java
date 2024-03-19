@@ -29,8 +29,10 @@ public class CommentEntity extends Timestamped {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Long cardId;
 
+    @Column(nullable = false)
     private Long MemberId;
 
     @Builder

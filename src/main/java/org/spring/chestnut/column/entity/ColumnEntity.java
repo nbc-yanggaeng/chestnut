@@ -29,8 +29,10 @@ public class ColumnEntity extends Timestamped {
     @Column(nullable = false, length = 50)
     private String title;
 
+    @Column
     private Integer sequence;
 
+    @Column(nullable = false)
     private Long boardId;
 
     @Builder
