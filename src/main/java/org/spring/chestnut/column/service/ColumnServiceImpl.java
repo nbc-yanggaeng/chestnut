@@ -29,8 +29,7 @@ public class ColumnServiceImpl implements ColumnService{
             .orElseThrow(() -> new IllegalArgumentException("해당 보드가 존재하지 않습니다."));
 
         // 해당 보드의 마지막 컬럼 순서를 찾기
-        Integer lastSequence = columnRepository.findLastSequenceByBoardId(board.getId())
-            .orElse(0); // 컬럼이 없을 경우 기본값으로 0을 반환
+        Integer lastSequence = columnRepository.countByBoardId(board.getId());
 
         // 새 컬럼 객체 생성
         ColumnEntity newColumn = new ColumnEntity(

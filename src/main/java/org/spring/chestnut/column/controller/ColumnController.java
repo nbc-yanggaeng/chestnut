@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class ColumnController {
     @PostMapping("/boards/{boardId}/columns")
     public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> createColumn(
         @PathVariable("boardId") Long boardId,
-        ColumnRequestDto requestDto
+        @RequestBody ColumnRequestDto requestDto
     ) {
         ColumnEntity createdColumn = columnServiceImpl.createColumn(boardId, requestDto);
 
@@ -64,7 +65,7 @@ public class ColumnController {
     @PutMapping("/columns/{columnId}")
     public ResponseEntity<ResponseDto<List<ColumnResponseDto>>> updateColumn(
         @PathVariable("columnId") Long columnId,
-        ColumnRequestDto requestDto
+        @RequestBody ColumnRequestDto requestDto
     ) {
         ColumnEntity updatedColumn = columnServiceImpl.updateColumn(columnId, requestDto);
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
