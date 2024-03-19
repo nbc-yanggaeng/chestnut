@@ -1,4 +1,4 @@
-package org.spring.chestnut.board.dto;
+package org.spring.chestnut.board.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

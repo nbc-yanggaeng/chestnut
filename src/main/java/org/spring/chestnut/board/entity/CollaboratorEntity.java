@@ -6,11 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Table(name = "collaborator")
 public class CollaboratorEntity {
@@ -24,4 +28,11 @@ public class CollaboratorEntity {
 
     @Column(nullable = false)
     private Long boardId;
+
+    public static CollaboratorEntity of(Long boardId, Long memberId) {
+        return CollaboratorEntity.builder()
+            .boardId(boardId)
+            .memberId(memberId)
+            .build();
+    }
 }
