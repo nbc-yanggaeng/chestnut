@@ -21,7 +21,7 @@ import org.spring.chestnut.global.entity.Timestamped;
 @Builder
 @SQLDelete(sql = "update board set deleted_at = NOW() where id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
-@Table(name = "baord")
+@Table(name = "board")
 public class BoardEntity extends Timestamped {
 
     @Id
