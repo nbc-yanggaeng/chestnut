@@ -11,5 +11,5 @@ public interface ColumnRepository extends JpaRepository<ColumnEntity, Long> {
 
     List<ColumnEntity> findBySequenceBetween(int i, Integer newSequence);
 
-    List<ColumnEntity> findAllByColumnEntity(ColumnEntity columnEntity);
+
 }

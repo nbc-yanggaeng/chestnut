@@ -101,7 +101,7 @@ public class ColumnServiceImpl implements ColumnService{
 
         for (ColumnEntity columnEntity : columnEntityList) {
             List<ColumnResponseDto> columnResponseDtoList = new ArrayList<>();
-            List<ColumnEntity> columnList = columnRepository.findAllByColumnEntity(columnEntity);
+            List<ColumnEntity> columnList = columnRepository.findAll();
 
             for (ColumnEntity column : columnList) {
                 ColumnResponseDto columnResponseDto = new ColumnResponseDto(column.getId(), column.getTitle(), column.getSequence());
