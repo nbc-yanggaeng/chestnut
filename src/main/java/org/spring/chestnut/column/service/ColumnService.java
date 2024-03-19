@@ -1,6 +1,5 @@
 package org.spring.chestnut.column.service;
 
-import java.util.List;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
@@ -11,5 +10,5 @@ public interface ColumnService {
     ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto);
     ColumnEntity updateSecuence(Long columnId, Integer newSequence);
     void deleteColumn(Long columnId);
-    List<ColumnListResponseDto> getColumn();
+    ColumnListResponseDto getColumn(Long boardId);
 }

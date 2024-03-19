@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ColumnServiceImpl implements ColumnService{
+public class ColumnServiceImpl implements ColumnService {
 
     private final ColumnRepository columnRepository;
     private final BoardRepository boardRepository;
@@ -94,21 +94,12 @@ public class ColumnServiceImpl implements ColumnService{
     }
 
     @Override
-    public List<ColumnListResponseDto> getColumn() {
-        List<ColumnEntity> columnEntityList = columnRepository.findAll();
-        List<ColumnListResponseDto> columnListResponseDtoList = new ArrayList<>();
+    public ColumnListResponseDto getColumn(Long boardId) {
+        List<ColumnEntity> columnEntityList = columnRepository.findAllByBoardId(boardId);
 
-        for (ColumnEntity columnEntity : columnEntityList) {
-            List<ColumnResponseDto> columnResponseDtoList = new ArrayList<>();
-            List<ColumnEntity> columnList = columnRepository.findAll();
+        List<ColumnResponseDto> columnResponseDtoList = columnEntityList.stream().map(
+                x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
 
-            for (ColumnEntity column : columnList) {
-                ColumnResponseDto columnResponseDto = new ColumnResponseDto(column.getId(), column.getTitle(), column.getSequence());
-                columnResponseDtoList.add(columnResponseDto);
-            }
-            ColumnListResponseDto columnListResponseDto = new ColumnListResponseDto(columnEntity.getBoardId(), columnResponseDtoList);
-            columnListResponseDtoList.add(columnListResponseDto);
-        }
-        return columnListResponseDtoList;
+        return new ColumnListResponseDto(boardId, columnResponseDtoList);
     }
 }
