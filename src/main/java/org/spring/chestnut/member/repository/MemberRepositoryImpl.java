@@ -1,5 +1,6 @@
 package org.spring.chestnut.member.repository;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.member.dto.request.SignupDto;
 import org.spring.chestnut.member.dto.response.MemberResponseDto;
@@ -25,5 +26,10 @@ public class MemberRepositoryImpl implements MemberRepository {
         MemberEntity.of(dto.getEmail(), passwordEncoder.encode(dto.getPassword())));
 
     return new MemberResponseDto(member.getEmail());
+  }
+
+  @Override
+  public Optional<MemberEntity> findByEmail(String email) {
+    return memberJpaRepository.findByEmail(email);
   }
 }
