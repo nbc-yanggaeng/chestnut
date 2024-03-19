@@ -43,4 +43,7 @@ public class ColumnService {
         return columnRepository.save(column);
     }
 
+    public void deleteColumn(Long columnId) {
+        columnRepository.deleteById(columnId);
+    }
 }
