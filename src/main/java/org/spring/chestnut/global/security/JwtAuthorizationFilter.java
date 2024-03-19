@@ -73,19 +73,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   }
 
   // 인증 처리
-  public void setAuthentication(String username) {
+  public void setAuthentication(String memberId) {
 
     SecurityContext context = SecurityContextHolder.createEmptyContext();
-    Authentication authentication = createAuthentication(username);
+    Authentication authentication = createAuthentication(memberId);
     context.setAuthentication(authentication);
 
     SecurityContextHolder.setContext(context);
   }
 
   // 인증 객체 생성
-  private Authentication createAuthentication(String username) {
+  private Authentication createAuthentication(String memberId) {
 
-    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
   }
 
@@ -97,7 +97,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
       UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(
           info.getSubject());
       RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(
-          userDetails.getMember().getId());
+          userDetails.getMemberId());
 
       TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
 
@@ -128,7 +128,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   private void refreshAccessToken(HttpServletResponse response, UserDetailsImpl userDetails)
       throws IOException {
 
-    String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getUsername(), "User");
+    String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getMemberId(), "User");
     response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
     response.setStatus(HttpServletResponse.SC_OK);
 
