@@ -67,7 +67,7 @@ public class CommentController {
 
         List<CommentResponse> responses = commentService.getComments(cardId, userDetails);
 
-        return ResponseDto.ok("댓글 삭제 성공", responses);
+        return ResponseDto.ok("댓글 조회 성공", responses);
     }
 
 }
