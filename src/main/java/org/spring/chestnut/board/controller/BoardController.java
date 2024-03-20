@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,10 +55,10 @@ public class BoardController {
         boardService.deleteBoard(boardId, userDetails);
     }
 
-    @PostMapping("/{boardId}/invite/{memberId}")
+    @PostMapping("/{boardId}/invite")
     public void inviteMember(
         @PathVariable Long boardId,
-        @PathVariable Long memberId,
+        @RequestParam Long memberId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         boardService.inviteMember(boardId, memberId, userDetails);
