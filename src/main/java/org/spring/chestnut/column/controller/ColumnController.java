@@ -62,7 +62,6 @@ public class ColumnController {
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
         List<ColumnResponseDto> columnList = List.of(columnResponseDto);
-
         return ResponseDto.ok("컬럼을 수정했습니다.", columnList);
     }
 
