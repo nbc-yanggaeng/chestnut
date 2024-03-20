@@ -13,9 +13,8 @@ public class ControllerAdvice {
     })
     public ResponseEntity<ResponseDto> BadRequestExceptionHandler(Exception e) {
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
-            .body(ResponseDto.builder()
-                .message(e.getMessage())
-                .build());
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ResponseDto<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseDto.badRequest(e.getMessage());
     }
 }
