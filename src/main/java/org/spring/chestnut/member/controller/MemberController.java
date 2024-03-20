@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.dto.ResponseDto;
 import org.spring.chestnut.global.jwt.JwtProvider;
+import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.spring.chestnut.member.dto.request.LoginRequestDto;
 import org.spring.chestnut.member.dto.request.SignupRequestDto;
 import org.spring.chestnut.member.dto.request.UpdateRequestDto;
@@ -25,47 +26,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/members")
 public class MemberController {
 
-  private final MemberService memberService;
+    private final MemberService memberService;
 
-  @PostMapping("/signup")
-  public ResponseEntity<ResponseDto<MemberResponseDto>> signup(
-      @Validated @RequestBody SignupRequestDto dto
-  ) {
-    MemberResponseDto responseDto = memberService.signup(dto);
-    return ResponseDto.ok("회원 가입에 성공하였습니다.", responseDto);
-  }
+    @PostMapping("/signup")
+    public ResponseEntity<ResponseDto<MemberResponseDto>> signup(
+        @Validated @RequestBody SignupRequestDto dto
+    ) {
+        MemberResponseDto responseDto = memberService.signup(dto);
+        return ResponseDto.ok("회원 가입에 성공하였습니다.", responseDto);
+    }
 
-  @PostMapping("/login")
-  public ResponseEntity<ResponseDto<String>> login(
-      @Validated @RequestBody LoginRequestDto dto, HttpServletResponse response
-  ) {
-    LoginResponseDto responseDto = memberService.login(dto);
-    response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, responseDto.getToken());
-    return ResponseDto.ok("로그인에 성공하였습니다.", responseDto.getUsername());
-  }
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto<String>> login(
+        @Validated @RequestBody LoginRequestDto dto,
+        HttpServletResponse response
+    ) {
+        LoginResponseDto responseDto = memberService.login(dto);
+        response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY,
+            responseDto.getToken());
+        return ResponseDto.ok("로그인에 성공하였습니다.", responseDto.getEmail());
+    }
 
-  @PostMapping("/logout")
-  public ResponseEntity<ResponseDto<Void>> logout(
-      @AuthenticationPrincipal Long memberId
-  ) {
-    memberService.logout(memberId);
-    return ResponseDto.ok("로그아웃에 성공하였습니다.", null);
-  }
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<Void>> logout(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        memberService.logout(userDetails.getMemberId());
+        return ResponseDto.ok("로그아웃에 성공하였습니다.", null);
+    }
 
-  @PutMapping
-  public ResponseEntity<ResponseDto<Void>> updatePassword(
-      @AuthenticationPrincipal Long memberId,
-      @RequestBody UpdateRequestDto dto
-  ) {
-    memberService.updatePassword(memberId, dto);
-    return ResponseDto.ok("회원의 비밀번호를 수정하였습니다.", null);
-  }
+    @PutMapping
+    public ResponseEntity<ResponseDto<Void>> updatePassword(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody UpdateRequestDto dto
+    ) {
+        memberService.updatePassword(userDetails.getMemberId(), dto);
+        return ResponseDto.ok("회원의 비밀번호를 수정하였습니다.", null);
+    }
 
-  @DeleteMapping
-  public ResponseEntity<ResponseDto<Void>> delete(
-      @AuthenticationPrincipal Long memberId
-  ) {
-    memberService.delete(memberId);
-    return ResponseDto.ok("회원을 성공적으로 삭제하였습니다.", null);
-  }
+    @DeleteMapping
+    public ResponseEntity<ResponseDto<Void>> delete(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        memberService.delete(userDetails.getMemberId());
+        return ResponseDto.ok("회원을 성공적으로 삭제하였습니다.", null);
+    }
 }

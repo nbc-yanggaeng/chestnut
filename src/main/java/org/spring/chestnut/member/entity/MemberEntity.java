@@ -42,7 +42,7 @@ public class MemberEntity extends Timestamped {
     }
 
     public void updatePassword(String password) {
-        if(password.equals(this.password)) {
+        if (password.equals(this.password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 

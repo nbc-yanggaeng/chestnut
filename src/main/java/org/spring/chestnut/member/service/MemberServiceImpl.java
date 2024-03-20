@@ -23,71 +23,71 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberServiceImpl implements MemberService {
 
-  private final MemberRepository memberRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final JwtProvider jwtProvider;
-  private final TokenRepository tokenRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final TokenRepository tokenRepository;
 
-  @Override
-  public MemberResponseDto signup(SignupRequestDto dto) {
+    @Override
+    public MemberResponseDto signup(SignupRequestDto dto) {
 
-    if (memberRepository.checkEmail(dto.getEmail())) {
-      throw new IllegalArgumentException("해당 이메일이 존재합니다.");
+        if (memberRepository.checkEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("해당 이메일이 존재합니다.");
+        }
+
+        SignupDto signupDto = new SignupDto(dto.getEmail(), dto.getPassword());
+
+        return memberRepository.signup(signupDto);
     }
 
-    SignupDto signupDto = new SignupDto(dto.getEmail(), dto.getPassword());
+    @Override
+    public LoginResponseDto login(LoginRequestDto dto) {
+        MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(
+            () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+        );
 
-    return memberRepository.signup(signupDto);
-  }
+        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
 
-  @Override
-  public LoginResponseDto login(LoginRequestDto dto) {
-    MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(
-        () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
-    );
-
-    if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        String token = generateToken(member.getId());
+        return new LoginResponseDto(member.getEmail(), token);
     }
 
-    String token = generateToken(member.getId());
-    return new LoginResponseDto(member.getEmail(), token);
-  }
+    @Override
+    public void logout(Long memberId) {
+        List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByMemberId(
+            memberId);
 
-  @Override
-  public void logout(Long memberId) {
-    List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByMemberId(
-        memberId);
-
-    refreshTokenEntityList.forEach(tokenRepository::deleteToken);
-  }
-
-  @Override
-  public void updatePassword(Long memberId, UpdateRequestDto dto) {
-    MemberEntity member = memberRepository.findByMemberId(memberId).orElseThrow(
-        () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
-    );
-
-    if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        refreshTokenEntityList.forEach(tokenRepository::deleteToken);
     }
 
-    UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
-    updatePasswordDto.checkChangePasswordEquals();
+    @Override
+    public void updatePassword(Long memberId, UpdateRequestDto dto) {
+        MemberEntity member = memberRepository.findByMemberId(memberId).orElseThrow(
+            () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+        );
 
-    member.updatePassword(passwordEncoder.encode(dto.getChangePassword()));
-  }
+        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
 
-  @Override
-  public void delete(Long memberId) {
-    memberRepository.deleteMember(memberId);
-  }
+        UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
+        updatePasswordDto.checkChangePasswordEquals();
 
-  private String generateToken(Long memberId) {
-    String refreshToken = jwtProvider.generateRefreshToken(memberId, "User");
-    refreshToken = jwtProvider.substringToken(refreshToken);
-    tokenRepository.register(memberId, refreshToken);
+        member.updatePassword(passwordEncoder.encode(dto.getChangePassword()));
+    }
 
-    return jwtProvider.generateAccessToken(memberId, "User");
-  }
+    @Override
+    public void delete(Long memberId) {
+        memberRepository.deleteMember(memberId);
+    }
+
+    private String generateToken(Long memberId) {
+        String refreshToken = jwtProvider.generateRefreshToken(memberId, "User");
+        refreshToken = jwtProvider.substringToken(refreshToken);
+        tokenRepository.register(memberId, refreshToken);
+
+        return jwtProvider.generateAccessToken(memberId, "User");
+    }
 }

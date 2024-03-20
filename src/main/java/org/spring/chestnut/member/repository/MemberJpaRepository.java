@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long> {
 
-  Optional<MemberEntity> findByEmail(String email);
+    Optional<MemberEntity> findByEmail(String email);
 
-  @Query(value = "delete from CollaboratorEntity c where c.memberId = :memberId")
-  void deleteCollaborator(Long memberId);
+    @Query(value = "delete from CollaboratorEntity c where c.memberId = :memberId")
+    void deleteCollaborator(Long memberId);
 
-  @Query(value = "delete from WorkerEntity w where w.memberId = :memberId")
-  void deleteWorkers(Long memberId);
+    @Query(value = "delete from WorkerEntity w where w.memberId = :memberId")
+    void deleteWorkers(Long memberId);
 }

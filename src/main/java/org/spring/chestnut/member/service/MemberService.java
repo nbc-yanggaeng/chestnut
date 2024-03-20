@@ -8,13 +8,13 @@ import org.spring.chestnut.member.dto.response.MemberResponseDto;
 
 public interface MemberService {
 
-  MemberResponseDto signup(SignupRequestDto dto);
+    MemberResponseDto signup(SignupRequestDto dto);
 
-  LoginResponseDto login(LoginRequestDto dto);
+    LoginResponseDto login(LoginRequestDto dto);
 
-  void logout(Long memberId);
+    void logout(Long memberId);
 
-  void updatePassword(Long memberId, UpdateRequestDto dto);
+    void updatePassword(Long memberId, UpdateRequestDto dto);
 
-  void delete(Long memberId);
+    void delete(Long memberId);
 }
