@@ -86,7 +86,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   private Authentication createAuthentication(String memberId) {
 
     UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
-    return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    return new UsernamePasswordAuthenticationToken(Long.parseLong(memberId), null, userDetails.getAuthorities());
   }
 
   // 토큰을 재발급 및 예외처리하는 메서드
@@ -94,15 +94,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     try {
       Claims info = jwtProvider.getMemberInfoFromExpiredToken(tokenValue);
-      UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(
-          info.getSubject());
-      RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(
-          userDetails.getMemberId());
+      Long memberId = Long.parseLong(info.getSubject());
 
+      RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(memberId);
       TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
 
       if (refreshState.equals(TokenState.VALID)) {
-        refreshAccessToken(response, userDetails);
+        refreshAccessToken(response, memberId);
       } else {
         handleExpiredToken(response, refreshToken);
       }
@@ -125,10 +123,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   }
 
   // 토큰 저장소에 토큰이 남아 있을 경우에 대한 메서드
-  private void refreshAccessToken(HttpServletResponse response, UserDetailsImpl userDetails)
+  private void refreshAccessToken(HttpServletResponse response, Long memberId)
       throws IOException {
 
-    String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getMemberId(), "User");
+    String newAccessToken = jwtProvider.generateRefreshToken(memberId, "User");
     response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
     response.setStatus(HttpServletResponse.SC_OK);
 
