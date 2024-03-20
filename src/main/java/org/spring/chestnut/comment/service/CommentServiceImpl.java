@@ -6,6 +6,7 @@ import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.comment.dto.CommentResponse;
 import org.spring.chestnut.comment.entity.CommentEntity;
 import org.spring.chestnut.comment.repository.CommentRepository;
+import org.spring.chestnut.global.execption.custom.NotFoundException;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
         UserDetailsImpl userDetails) {
 
         CommentEntity comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new NullPointerException("없는 댓글 입니다"));
+            .orElseThrow(() -> new NotFoundException("없는 댓글 입니다"));
 
         comment.updateComment(request);
         return new CommentResponse(commentRepository.saveAndFlush(comment));
@@ -40,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId, UserDetailsImpl userDetails) {
         CommentEntity comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new NullPointerException("없는 댓글 입니다"));
+            .orElseThrow(() -> new NotFoundException("없는 댓글 입니다"));
 
         commentRepository.delete(comment);
     }

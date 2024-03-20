@@ -11,6 +11,8 @@ import org.spring.chestnut.card.entity.CardEntity;
 import org.spring.chestnut.card.entity.WorkerEntity;
 import org.spring.chestnut.card.repository.CardRepository;
 import org.spring.chestnut.card.repository.WorkerRepository;
+import org.spring.chestnut.global.execption.custom.NotFoundException;
+import org.spring.chestnut.global.execption.custom.WorkerException;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,7 @@ public class CardServiceImpl implements CardService {
         UserDetails member) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+            .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         cardEntity.updateCard(request);
         CardEntity updateCard = cardRepository.save(cardEntity);
@@ -56,7 +58,7 @@ public class CardServiceImpl implements CardService {
     public void deleteCard(Long cardId, UserDetails member) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+            .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         cardRepository.delete(cardEntity);
         workerRepository.deleteByCardId(cardId);
@@ -67,7 +69,7 @@ public class CardServiceImpl implements CardService {
     public CardResponse getCardByCardId(Long cardId) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
-            .orElseThrow(() -> new NullPointerException("없는 카드입니다."));
+            .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         List<Long> workers = workerRepository.findByCardId(cardId).stream()
             .map(WorkerEntity::getMemberId)
@@ -87,7 +89,7 @@ public class CardServiceImpl implements CardService {
         UserDetailsImpl userDetails) {
 
         CardEntity card = cardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+            .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         List<WorkerEntity> workerLists = workerRepository.findByCardIdOrderByMemberId(cardId);
 
@@ -97,8 +99,8 @@ public class CardServiceImpl implements CardService {
 
         if (worKerRequest.getAddRequest() != null) {
             List<Long> addRequest = worKerRequest.getAddRequest().getWorkerList();
-            if (new HashSet<>(collect).containsAll(addRequest)) {
-                throw new IllegalArgumentException("이미 있는 작업자입니다.");
+            if (!addRequest.isEmpty() && new HashSet<>(collect).containsAll(addRequest)) {
+                throw new WorkerException("이미 있는 작업자입니다.");
             } else {
                 addRequest.forEach(
                     t -> workerRepository.save(WorkerEntity.of(cardId, t))
@@ -109,7 +111,7 @@ public class CardServiceImpl implements CardService {
         if (worKerRequest.getRemoveRequest() != null) {
             List<Long> removeRequest = worKerRequest.getRemoveRequest().getWorkerList();
             if (!new HashSet<>(collect).containsAll(removeRequest)) {
-                throw new IllegalArgumentException("없는 작업자입니다.");
+                throw new WorkerException("없는 작업자입니다.");
             } else {
                 workerLists.stream().filter(
                     t -> removeRequest.contains(t.getMemberId())
@@ -129,7 +131,7 @@ public class CardServiceImpl implements CardService {
         UserDetailsImpl userDetails) {
 
         CardEntity card = cardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("없는 카드입니다."));
+            .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         card.moveCard(request.getMoveTo());
         CardEntity save = cardRepository.save(card);
