@@ -8,4 +8,6 @@ public interface BoardRepository {
     BoardEntity save(BoardDto boardDto);
 
     BoardEntity findBoard(Long boardId);
+
+    void deleteById(Long boardId);
 }

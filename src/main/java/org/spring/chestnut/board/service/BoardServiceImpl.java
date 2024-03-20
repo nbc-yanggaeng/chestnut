@@ -1,5 +1,6 @@
 package org.spring.chestnut.board.service;
 
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.dto.request.BoardDto;
@@ -49,16 +50,17 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public void deleteBoard(Long boardId, UserDetailsImpl userDetails) {
+        Long memberId = userDetails.getMemberId();
+        BoardEntity board = boardRepository.findBoard(boardId);
+        if(!Objects.equals(memberId, board.getCreateMemberId())) {
+            throw new IllegalArgumentException("보드 생성 멤버가 아닙니다");
+        }
 
+        boardRepository.deleteById(boardId);
     }
 
     @Override
     public void inviteMember(Long boardId, Long memberId, UserDetailsImpl userDetails) {
 
     }
-
-//    private BoardEntity findBoard(Long boardId) throws InvalidInputException {
-//        return boardRepository.findById(boardId)
-//            .orElseThrow(() -> new InvalidInputException("해당 보드를 찾을 수 없습니다."));
-//    }
 }
