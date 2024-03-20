@@ -2,6 +2,7 @@ package org.spring.chestnut.comment.controller;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.comment.dto.CommentCreateRequest;
 import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.comment.dto.CommentResponse;
 import org.spring.chestnut.comment.service.CommentService;
@@ -23,14 +24,13 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/cards/{cardId}/comments")
+    @PostMapping("/comments")
     public ResponseEntity<ResponseDto<CommentResponse>> createComment(
-        @PathVariable Long cardId,
-        @RequestBody CommentRequest request,
+        @RequestBody CommentCreateRequest request,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        CommentResponse response = commentService.createComment(cardId, request, userDetails);
+        CommentResponse response = commentService.createComment(request, userDetails);
 
         return ResponseDto.ok("댓글 작성 성공", response);
     }

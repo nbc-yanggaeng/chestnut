@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.repository.CollaboratorRepository;
 import org.spring.chestnut.card.repository.CardRepository;
+import org.spring.chestnut.comment.dto.CommentCreateRequest;
 import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.comment.dto.CommentResponse;
 import org.spring.chestnut.comment.entity.CommentEntity;
@@ -23,9 +24,10 @@ public class CommentServiceImpl implements CommentService {
     private final CardRepository cardRepository;
 
     @Override
-    public CommentResponse createComment(Long cardId, CommentRequest request,
+    public CommentResponse createComment(CommentCreateRequest request,
         UserDetailsImpl userDetails) {
 
+        Long cardId = request.getCardId();
         cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
         isCollaborator(cardId, userDetails.getMemberId());

@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.spring.chestnut.comment.dto.CommentCreateRequest;
 import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.global.entity.Timestamped;
 
@@ -40,6 +41,14 @@ public class CommentEntity extends Timestamped {
     private Long memberId;
 
     public static CommentEntity of(Long cardId, CommentRequest request, Long memberId) {
+        return CommentEntity.builder()
+            .content(request.getContent())
+            .cardId(cardId)
+            .memberId(memberId)
+            .build();
+    }
+
+    public static CommentEntity of(Long cardId, CommentCreateRequest request, Long memberId) {
         return CommentEntity.builder()
             .content(request.getContent())
             .cardId(cardId)
