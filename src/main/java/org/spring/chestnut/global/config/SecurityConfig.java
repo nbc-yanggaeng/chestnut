@@ -21,41 +21,41 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final JwtProvider jwtProvider;
-  private final TokenRepository tokenRepository;
-  private final UserDetailsServiceImpl userDetailsService;
+    private final JwtProvider jwtProvider;
+    private final TokenRepository tokenRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-      throws Exception {
-    return configuration.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+        throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
-  @Bean
-  public JwtAuthorizationFilter jwtAuthorizationFilter() {
-    return new JwtAuthorizationFilter(jwtProvider, tokenRepository, userDetailsService);
-  }
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(jwtProvider, tokenRepository, userDetailsService);
+    }
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf((csrf) -> csrf.disable());
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf((csrf) -> csrf.disable());
 
-    http.sessionManagement((sessionManagement) ->
-        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    );
+        http.sessionManagement((sessionManagement) ->
+            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
 
-    http.authorizeHttpRequests((authorizeHttpRequests) ->
-        authorizeHttpRequests
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            .permitAll() // resources 접근 허용 설정
-            .requestMatchers("/members/signup").permitAll()
-            .requestMatchers("/members/login").permitAll()
-            .requestMatchers("/members/logout").permitAll()
-            .anyRequest().authenticated() // 그 외 모든 요청 인증처리
-    );
+        http.authorizeHttpRequests((authorizeHttpRequests) ->
+            authorizeHttpRequests
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .permitAll() // resources 접근 허용 설정
+                .requestMatchers("/members/signup").permitAll()
+                .requestMatchers("/members/login").permitAll()
+                .requestMatchers("/members/logout").permitAll()
+                .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+        );
 
-    http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-  }
+        return http.build();
+    }
 }

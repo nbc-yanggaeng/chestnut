@@ -22,7 +22,7 @@ public class ResponseDto<T> {
     }
 
     public static <T> ResponseEntity<ResponseDto<T>> badRequest(String message) {
-        return ResponseEntity.badRequest().body((new ResponseDto<>(message,null)));
+        return ResponseEntity.badRequest().body((new ResponseDto<>(message, null)));
     }
 
     public static <T> ResponseEntity<ResponseDto<T>> of(
