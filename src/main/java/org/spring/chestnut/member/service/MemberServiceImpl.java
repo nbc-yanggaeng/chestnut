@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.global.jwt.JwtProvider;
 import org.spring.chestnut.global.jwt.entity.RefreshTokenEntity;
 import org.spring.chestnut.global.jwt.repository.TokenRepository;
-import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.spring.chestnut.member.dto.UpdatePasswordDto;
 import org.spring.chestnut.member.dto.request.LoginRequestDto;
 import org.spring.chestnut.member.dto.request.SignupDto;
@@ -21,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+@Transactional
+public class MemberServiceImpl implements MemberService {
 
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public MemberResponseDto signup(SignupRequestDto dto) {
 
-    if(memberRepository.checkEmail(dto.getEmail())) {
+    if (memberRepository.checkEmail(dto.getEmail())) {
       throw new IllegalArgumentException("해당 이메일이 존재합니다.");
     }
 
@@ -41,7 +41,6 @@ public class MemberServiceImpl implements MemberService{
   }
 
   @Override
-  @Transactional
   public LoginResponseDto login(LoginRequestDto dto) {
     MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(
         () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
@@ -56,22 +55,20 @@ public class MemberServiceImpl implements MemberService{
   }
 
   @Override
-  @Transactional
-  public void logout(UserDetailsImpl userDetails) {
+  public void logout(Long memberId) {
     List<RefreshTokenEntity> refreshTokenEntityList = tokenRepository.findAllByMemberId(
-        userDetails.getMemberId());
+        memberId);
 
     refreshTokenEntityList.forEach(tokenRepository::deleteToken);
   }
 
   @Override
-  @Transactional
   public void updatePassword(Long memberId, UpdateRequestDto dto) {
     MemberEntity member = memberRepository.findByMemberId(memberId).orElseThrow(
         () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
     );
 
-    if(!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
+    if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
@@ -79,6 +76,11 @@ public class MemberServiceImpl implements MemberService{
     updatePasswordDto.checkChangePasswordEquals();
 
     member.updatePassword(passwordEncoder.encode(dto.getChangePassword()));
+  }
+
+  @Override
+  public void delete(Long memberId) {
+    memberRepository.deleteMember(memberId);
   }
 
   private String generateToken(Long memberId) {

@@ -37,4 +37,16 @@ public class MemberRepositoryImpl implements MemberRepository {
   public Optional<MemberEntity> findByMemberId(Long memberId) {
     return memberJpaRepository.findById(memberId);
   }
+
+  @Override
+  public void deleteMember(Long memberId) {
+    MemberEntity member = memberJpaRepository.findById(memberId).orElseThrow(
+        () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+    );
+
+    memberJpaRepository.deleteCollaborator(memberId);
+    memberJpaRepository.deleteWorkers(memberId);
+
+    memberJpaRepository.delete(member);
+  }
 }
