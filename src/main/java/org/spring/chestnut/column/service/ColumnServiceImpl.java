@@ -98,7 +98,7 @@ public class ColumnServiceImpl implements ColumnService {
         List<ColumnEntity> columnEntityList = columnRepository.findAllByBoardId(boardId);
 
         List<ColumnResponseDto> columnResponseDtoList = columnEntityList.stream().map(
-                x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
+            x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
 
         return new ColumnListResponseDto(boardId, columnResponseDtoList);
     }
