@@ -56,7 +56,9 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
+
         ColumnEntity columnToMove = validateColumn(columnId);
+
         Integer oldSequence = columnToMove.getSequence();
         List<ColumnEntity> columnsToShiftLeft = new ArrayList<>();
         List<ColumnEntity> columnsToShiftRight = new ArrayList<>();
@@ -98,7 +100,7 @@ public class ColumnServiceImpl implements ColumnService {
     }
 
     private ColumnEntity validateColumn(Long columnId) {
-        return (ColumnEntity) columnRepository.findById(columnId)
+        return columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
     }
 }

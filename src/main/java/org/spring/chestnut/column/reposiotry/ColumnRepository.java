@@ -14,7 +14,7 @@ public interface ColumnRepository {
 
     ColumnEntity save(ColumnEntity newColumn);
 
-    Optional<Object> findById(Long columnId);
+    Optional<ColumnEntity> findById(Long columnId);
 
     void deleteById(Long columnId);
 

@@ -34,8 +34,8 @@ public class ColumnRepositoryImpl implements ColumnRepository {
     }
 
     @Override
-    public Optional<Object> findById(Long columnId) {
-        return Optional.of(columnJpaRepository.findById(columnId));
+    public Optional<ColumnEntity> findById(Long columnId) {
+        return columnJpaRepository.findById(columnId);
     }
 
     @Override
