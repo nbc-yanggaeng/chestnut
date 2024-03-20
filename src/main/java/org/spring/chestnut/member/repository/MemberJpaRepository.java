@@ -20,19 +20,19 @@ public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long> {
     void deleteWorkers(Long memberId);
 
     @Modifying
-    @Query(value = "delete from BoardEntity b where b.createMemberId = :memberId")
+    @Query(value = "update BoardEntity b set b.deletedAt = current timestamp where b.createMemberId = :memberId")
     void deleteBoard(Long memberId);
 
     @Modifying
-    @Query(value = "delete from ColumnEntity c where c.boardId = :boardId")
+    @Query(value = "update ColumnEntity c set c.deletedAt = current timestamp where c.boardId = :boardId")
     void deleteColumn(Long boardId);
 
     @Modifying
-    @Query(value = "delete from CardEntity c where c.columnId in (select c.id from ColumnEntity c where c.boardId = :boardId)")
+    @Query(value = "update CardEntity c set c.deletedAt = current timestamp where c.columnId in (select c.id from ColumnEntity c where c.boardId = :boardId)")
     void deleteCard(Long boardId);
 
     @Modifying
-    @Query(value = "delete from CommentEntity c where c.memberId = :memberId")
+    @Query(value = "update CommentEntity c set c.deletedAt = current timestamp where c.memberId = :memberId")
     void deleteComment(Long memberId);
 
     @Modifying
