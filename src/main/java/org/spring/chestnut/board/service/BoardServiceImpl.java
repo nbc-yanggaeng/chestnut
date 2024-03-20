@@ -48,17 +48,21 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public void updateBoard(Long boardId, BoardRequestDto requestDto, UserDetailsImpl userDetails) {
+        // 로그인 멤버가 보드 생성 멤버인지 확인
+        Long memberId = userDetails.getMemberId();
+        validateCreateBoardMember(boardId, memberId);
+        BoardDto boardDto = new BoardDto(requestDto.getTitle(), requestDto.getBackgroundColor(),
+            requestDto.getDescription(), memberId);
 
+        boardRepository.update(boardDto, boardId);
     }
 
     @Override
     @Transactional
     public void deleteBoard(Long boardId, UserDetailsImpl userDetails) {
+        // 로그인 멤버가 보드 생성 멤버인지 확인
         Long memberId = userDetails.getMemberId();
-        BoardEntity board = boardRepository.findById(boardId);
-        if(!Objects.equals(memberId, board.getCreateMemberId())) {
-            throw new IllegalArgumentException("보드 생성 멤버가 아닙니다");
-        }
+        validateCreateBoardMember(boardId, memberId);
 
         boardRepository.deleteById(boardId);
     }
@@ -88,5 +92,12 @@ public class BoardServiceImpl implements BoardService{
             memberId
         );
         collaboratorRepository.save(collaborator);
+    }
+
+    private void validateCreateBoardMember(Long boardId, Long memberId) {
+        BoardEntity board = boardRepository.findById(boardId);
+        if(!Objects.equals(memberId, board.getCreateMemberId())) {
+            throw new IllegalArgumentException("보드 생성 멤버가 아닙니다");
+        }
     }
 }
