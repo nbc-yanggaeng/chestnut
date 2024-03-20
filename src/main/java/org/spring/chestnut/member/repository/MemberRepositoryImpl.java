@@ -46,7 +46,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
         memberJpaRepository.deleteCollaborator(memberId);
         memberJpaRepository.deleteWorkers(memberId);
+        memberJpaRepository.deleteComment(memberId);
 
+        memberJpaRepository.findBoardIds(memberId).forEach(id -> {
+            memberJpaRepository.deleteCard(id);
+            memberJpaRepository.deleteColumn(id);
+        });
+
+        memberJpaRepository.deleteBoard(memberId);
         memberJpaRepository.delete(member);
     }
 }
