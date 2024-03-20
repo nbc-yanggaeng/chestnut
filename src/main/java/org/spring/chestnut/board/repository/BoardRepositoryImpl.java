@@ -19,6 +19,16 @@ public class BoardRepositoryImpl implements BoardRepository{
     }
 
     @Override
+    public void update(BoardDto boardDto, Long boardId) {
+        BoardEntity board = findById(boardId);
+        String description = boardDto.getDescription(); // null일 수 있음
+
+        // description 이 null 이면 description 을 유지
+        board.update(boardDto.getTitle(), boardDto.getBackgroundColor(),
+            description != null ? description : board.getDescription());
+    }
+
+    @Override
     public void deleteById(Long boardId) {
         boardJpaRepository.deleteById(boardId);
     }

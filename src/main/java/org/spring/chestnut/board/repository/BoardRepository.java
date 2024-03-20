@@ -7,6 +7,8 @@ public interface BoardRepository {
 
     BoardEntity save(BoardDto boardDto);
 
+    void update(BoardDto boardDto, Long boardId);
+
     BoardEntity findById(Long boardId);
 
     void deleteById(Long boardId);
