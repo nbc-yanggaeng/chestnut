@@ -48,4 +48,10 @@ public class BoardEntity extends Timestamped {
             .createMemberId(memberId)
             .build();
     }
+
+    public void update(String title, String backgroundColor, String description) {
+        this.title = title;
+        this.backgroundColor = backgroundColor;
+        this.description = description;
+    }
 }
