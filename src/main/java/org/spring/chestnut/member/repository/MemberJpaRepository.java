@@ -22,10 +22,10 @@ public interface MemberJpaRepository extends JpaRepository<MemberEntity, Long> {
     @Query(value = "delete from ColumnEntity c where c.boardId = :boardId")
     void deleteColumn(Long boardId);
 
-    @Query(value = "delete from CardEntity c where c.boardId = :boardId")
+    @Query(value = "delete from CardEntity c where c.columnId in (select c.id from ColumnEntity c where c.boardId = :boardId)")
     void deleteCard(Long boardId);
 
-    @Query(value = "delete from CommentEntity c where c.MemberId = :memberId")
+    @Query(value = "delete from CommentEntity c where c.memberId = :memberId")
     void deleteComment(Long memberId);
 
     @Query(value = "select b.id from BoardEntity b where b.createMemberId = :memberId")
