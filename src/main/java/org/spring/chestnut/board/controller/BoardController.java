@@ -2,8 +2,7 @@ package org.spring.chestnut.board.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.spring.chestnut.board.dto.BoardRequestDto;
+import org.spring.chestnut.board.dto.request.BoardRequestDto;
 import org.spring.chestnut.board.service.BoardServiceImpl;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
