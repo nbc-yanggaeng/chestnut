@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class MemberResponseDto {
 
-  private final String email;
+    private final String email;
 
-  public MemberResponseDto(String email) {
-    this.email = email;
-  }
+    public MemberResponseDto(String email) {
+        this.email = email;
+    }
 }
