@@ -40,4 +40,12 @@ public class MemberEntity extends Timestamped {
             .password(password)
             .build();
     }
+
+    public void updatePassword(String password) {
+        if (password.equals(this.password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        this.password = password;
+    }
 }

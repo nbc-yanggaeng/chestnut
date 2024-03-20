@@ -7,11 +7,15 @@ import org.spring.chestnut.member.entity.MemberEntity;
 
 public interface MemberRepository {
 
-  boolean checkEmail(String email);
+    boolean checkEmail(String email);
 
-  MemberResponseDto signup(SignupDto dto);
+    MemberResponseDto signup(SignupDto dto);
 
-  Optional<MemberEntity> findByEmail(String email);
+    Optional<MemberEntity> findByEmail(String email);
 
-  Optional<MemberEntity> findById(Long memberId);
+    Optional<MemberEntity> findByMemberId(Long memberId);
+
+    Optional<MemberEntity> findById(Long memberId);
+
+    void deleteMember(Long memberId);
 }
