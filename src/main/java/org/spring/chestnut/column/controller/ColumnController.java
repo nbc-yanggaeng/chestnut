@@ -75,7 +75,7 @@ public class ColumnController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/columns/{columnId}/sequence")
+    @PutMapping("/columns/{columnId}/sequences")
     public ResponseEntity<ResponseDto<ColumnResponseDto>> updateSecuence(
         @PathVariable("columnId") Long columnId,
         @RequestBody ColumnSequenceRequestDto requestDto
