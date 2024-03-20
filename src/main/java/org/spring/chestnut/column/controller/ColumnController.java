@@ -1,7 +1,6 @@
 package org.spring.chestnut.column.controller;
 
 
-import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
@@ -62,7 +61,7 @@ public class ColumnController {
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
-        List<ColumnResponseDto> columnList = Arrays.asList(columnResponseDto);
+        List<ColumnResponseDto> columnList = List.of(columnResponseDto);
 
         return ResponseDto.ok("컬럼을 수정했습니다.", columnList);
     }
