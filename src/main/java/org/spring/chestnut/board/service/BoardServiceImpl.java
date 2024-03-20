@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.spring.chestnut.board.dto.request.BoardDto;
 import org.spring.chestnut.board.dto.request.BoardRequestDto;
+import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.entity.BoardEntity;
 import org.spring.chestnut.board.entity.CollaboratorEntity;
 import org.spring.chestnut.board.repository.BoardRepository;
@@ -25,8 +26,9 @@ public class BoardServiceImpl implements BoardService{
     private final MemberRepository memberRepository;
 
     @Override
-    public void getBoard(Long boardId, UserDetailsImpl userDetails) {
-
+    public BoardResponse getBoard(Long boardId, UserDetailsImpl userDetails) {
+        validateCreateBoardMember(boardId, userDetails.getMemberId());
+        return boardRepository.findAllByBoardId(boardId);
     }
 
     @Override

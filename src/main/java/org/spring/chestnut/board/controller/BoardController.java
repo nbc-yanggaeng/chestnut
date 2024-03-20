@@ -3,10 +3,12 @@ package org.spring.chestnut.board.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.dto.request.BoardRequestDto;
+import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.service.BoardServiceImpl;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,12 +24,12 @@ public class BoardController {
 
     private final BoardServiceImpl boardService;
 
-    @PostMapping("/{boardId}")
-    public void getBoard(
+    @GetMapping("/{boardId}")
+    public BoardResponse getBoard(
         @PathVariable Long boardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        boardService.getBoard(boardId, userDetails);
+        return boardService.getBoard(boardId, userDetails);
     }
 
     @PostMapping
