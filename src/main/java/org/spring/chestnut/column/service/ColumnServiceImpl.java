@@ -25,8 +25,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Transactional
     public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto) {
         // boardId로 BoardEntity 존재 여부 확인
-        BoardEntity board = boardRepository.findById(boardId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 보드가 존재하지 않습니다."));
+        BoardEntity board = boardRepository.findById(boardId);
 
         // 해당 보드의 마지막 컬럼 순서를 찾기
         Integer lastSequence = columnRepository.countByBoardId(board.getId());
