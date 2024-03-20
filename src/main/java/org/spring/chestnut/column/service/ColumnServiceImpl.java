@@ -135,9 +135,9 @@ public class ColumnServiceImpl implements ColumnService {
     }
 
     private void validateCollaborator(Long memberId, Long boardId) {
-        // 이미 협력자인지 확인
-        if (collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
-            throw new IllegalArgumentException("이미 협력자인 멤버입니다");
+        // 협력자인지 확인
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+            throw new IllegalArgumentException("협력자가 아닌 멤버입니다");
         }
     }
 }
