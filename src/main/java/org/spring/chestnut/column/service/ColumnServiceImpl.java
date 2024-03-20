@@ -32,11 +32,8 @@ public class ColumnServiceImpl implements ColumnService {
         Integer lastSequence = columnRepository.countByBoardId(board.getId());
 
         // 새 컬럼 객체 생성
-        ColumnEntity newColumn = new ColumnEntity(
-            requestDto.getTitle(),
-            lastSequence + 1, // 찾은 마지막 순서에 + 1
-            boardId
-        );
+        ColumnEntity newColumn = new ColumnEntity(requestDto.getTitle(), lastSequence + 1,
+            boardId); // 찾은 마지막 순서에 +1
 
         // 컬럼 저장 및 반환
         return columnRepository.save(newColumn);
@@ -45,9 +42,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto) {
-        ColumnEntity column = (ColumnEntity) columnRepository.findById(columnId)
-            .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
-
+        ColumnEntity column = validateColumn(columnId);
         column.setTitle(requestDto.getTitle());
         return columnRepository.save(column);
     }
@@ -61,9 +56,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
-        ColumnEntity columnToMove = (ColumnEntity) columnRepository.findById(columnId)
-            .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
-
+        ColumnEntity columnToMove = validateColumn(columnId);
         Integer oldSequence = columnToMove.getSequence();
         List<ColumnEntity> columnsToShiftLeft = new ArrayList<>();
         List<ColumnEntity> columnsToShiftRight = new ArrayList<>();
@@ -84,6 +77,7 @@ public class ColumnServiceImpl implements ColumnService {
                 column.setSequence(column.getSequence() + 1);
             }
         }
+
         // 칼럼 순서 업데이트
         columnToMove.setSequence(newSequence);
         columnRepository.saveAll(columnsToShiftLeft);
@@ -101,5 +95,10 @@ public class ColumnServiceImpl implements ColumnService {
             x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
 
         return new ColumnListResponseDto(boardId, columnResponseDtoList);
+    }
+
+    private ColumnEntity validateColumn(Long columnId) {
+        return (ColumnEntity) columnRepository.findById(columnId)
+            .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
     }
 }
