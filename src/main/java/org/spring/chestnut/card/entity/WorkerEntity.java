@@ -6,15 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "worker")
 public class WorkerEntity {
@@ -28,12 +24,4 @@ public class WorkerEntity {
 
     @Column(nullable = false)
     private Long cardId;
-
-    public static WorkerEntity of(Long cardId, Long memberId) {
-        return WorkerEntity.builder()
-            .cardId(cardId)
-            .memberId(memberId)
-            .build();
-    }
-
 }

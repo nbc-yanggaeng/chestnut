@@ -6,21 +6,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.spring.chestnut.comment.dto.CommentRequest;
 import org.spring.chestnut.global.entity.Timestamped;
 
 
 @Getter
 @Entity
 @Table(name = "comment")
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "update comment set deleted_at = NOW() where id = ?")
 @SQLRestriction(value = "deleted_at is NULL")
@@ -37,17 +33,12 @@ public class CommentEntity extends Timestamped {
     private Long cardId;
 
     @Column(nullable = false)
-    private Long memberId;
+    private Long MemberId;
 
-    public static CommentEntity of(Long cardId, CommentRequest request, Long memberId) {
+    @Builder
+    public static CommentEntity of(String content) {
         return CommentEntity.builder()
-            .content(request.getContent())
-            .cardId(cardId)
-            .memberId(memberId)
+            .content(content)
             .build();
-    }
-
-    public void updateComment(CommentRequest request) {
-        this.content = request.getContent();
     }
 }
