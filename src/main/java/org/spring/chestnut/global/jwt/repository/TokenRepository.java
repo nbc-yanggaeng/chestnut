@@ -5,11 +5,11 @@ import org.spring.chestnut.global.jwt.entity.RefreshTokenEntity;
 
 public interface TokenRepository {
 
-  void register(Long memberId, String token);
+    void register(Long memberId, String token);
 
-  RefreshTokenEntity findByMemberId(Long memberId);
+    RefreshTokenEntity findByMemberId(Long memberId);
 
-  List<RefreshTokenEntity> findAllByMemberId(Long memberId);
+    List<RefreshTokenEntity> findAllByMemberId(Long memberId);
 
-  void deleteToken(RefreshTokenEntity token);
+    void deleteToken(RefreshTokenEntity token);
 }
