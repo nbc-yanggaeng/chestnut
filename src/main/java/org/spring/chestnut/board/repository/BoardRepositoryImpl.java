@@ -19,7 +19,13 @@ public class BoardRepositoryImpl implements BoardRepository{
     }
 
     @Override
-    public BoardEntity findBoard(Long boardId) {
-        return null;
+    public void deleteById(Long boardId) {
+        boardJpaRepository.deleteById(boardId);
+    }
+
+    @Override
+    public BoardEntity findById(Long boardId) {
+        return boardJpaRepository.findById(boardId)
+            .orElseThrow(() -> new IllegalArgumentException("보드 데이터가 없습니다"));
     }
 }
