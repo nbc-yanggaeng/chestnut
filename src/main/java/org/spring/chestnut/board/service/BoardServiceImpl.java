@@ -64,6 +64,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    @Transactional
     public void inviteMember(Long boardId, Long memberId, UserDetailsImpl userDetails) {
         // 보드 생성자가 초대하는지 확인
         BoardEntity board = boardRepository.findById(boardId);
