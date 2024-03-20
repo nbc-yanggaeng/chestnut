@@ -12,24 +12,24 @@ import lombok.Getter;
 @Entity
 public class RefreshTokenEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private Long memberId;
+    private Long memberId;
 
-  private String token;
+    private String token;
 
-  protected RefreshTokenEntity() {
+    protected RefreshTokenEntity() {
 
-  }
+    }
 
-  private RefreshTokenEntity(Long memberId, String token) {
-    this.memberId = memberId;
-    this.token = token;
-  }
+    private RefreshTokenEntity(Long memberId, String token) {
+        this.memberId = memberId;
+        this.token = token;
+    }
 
-  public static RefreshTokenEntity of(Long memberId, String token) {
-    return new RefreshTokenEntity(memberId, token);
-  }
+    public static RefreshTokenEntity of(Long memberId, String token) {
+        return new RefreshTokenEntity(memberId, token);
+    }
 }

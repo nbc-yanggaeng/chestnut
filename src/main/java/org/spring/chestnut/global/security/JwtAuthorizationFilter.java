@@ -29,114 +29,114 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-  private final JwtProvider jwtProvider;
-  private final TokenRepository tokenRepository;
-  private final UserDetailsServiceImpl userDetailsService;
+    private final JwtProvider jwtProvider;
+    private final TokenRepository tokenRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
-  ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
 
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
 
-    String tokenValue = jwtProvider.getAccessTokenFromRequest(request);
+        String tokenValue = jwtProvider.getAccessTokenFromRequest(request);
 
-    if (!StringUtils.hasText(tokenValue)) {
-      filterChain.doFilter(request, response);
-      return;
+        if (!StringUtils.hasText(tokenValue)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        TokenState state = jwtProvider.validateToken(tokenValue);
+
+        // 토큰이 불일치라면?
+        if (state.equals(TokenState.INVALID)) {
+            log.error("Token Error");
+            return;
+        }
+
+        // 토큰이 만료가 된다면?
+        if (state.equals(TokenState.EXPIRED)) {
+            refreshTokenAndHandleException(tokenValue, response);
+            return;
+        }
+
+        Claims info = jwtProvider.getMemberInfoFromToken(tokenValue);
+
+        try {
+            setAuthentication(info.getSubject());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return;
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    TokenState state = jwtProvider.validateToken(tokenValue);
+    // 인증 처리
+    public void setAuthentication(String memberId) {
 
-    // 토큰이 불일치라면?
-    if (state.equals(TokenState.INVALID)) {
-      log.error("Token Error");
-      return;
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        Authentication authentication = createAuthentication(memberId);
+        context.setAuthentication(authentication);
+
+        SecurityContextHolder.setContext(context);
     }
 
-    // 토큰이 만료가 된다면?
-    if (state.equals(TokenState.EXPIRED)) {
-      refreshTokenAndHandleException(tokenValue, response);
-      return;
+    // 인증 객체 생성
+    private Authentication createAuthentication(String memberId) {
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
+        return new UsernamePasswordAuthenticationToken(userDetails, null,
+            userDetails.getAuthorities());
     }
 
-    Claims info = jwtProvider.getMemberInfoFromToken(tokenValue);
+    // 토큰을 재발급 및 예외처리하는 메서드
+    private void refreshTokenAndHandleException(String tokenValue, HttpServletResponse response) {
 
-    try {
-      setAuthentication(info.getSubject());
-    } catch (Exception e) {
-      log.error(e.getMessage());
-      return;
+        try {
+            Claims info = jwtProvider.getMemberInfoFromExpiredToken(tokenValue);
+            Long memberId = Long.parseLong(info.getSubject());
+
+            RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(memberId);
+            TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
+
+            if (refreshState.equals(TokenState.VALID)) {
+                refreshAccessToken(response, memberId);
+            } else {
+                handleExpiredToken(response, refreshToken);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
-    filterChain.doFilter(request, response);
-  }
+    // 이미 토큰 저장소에 있는 토큰이 없을 경우에 대한 메서드
+    private void handleExpiredToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
+        throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-  // 인증 처리
-  public void setAuthentication(String memberId) {
+        String jsonResponse = objectMapper.writeValueAsString(
+            ResponseDto.of(HttpStatus.UNAUTHORIZED, "모든 토큰이 만료되었습니다.", null));
+        tokenRepository.deleteToken(refreshToken);
 
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    Authentication authentication = createAuthentication(memberId);
-    context.setAuthentication(authentication);
-
-    SecurityContextHolder.setContext(context);
-  }
-
-  // 인증 객체 생성
-  private Authentication createAuthentication(String memberId) {
-
-    UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
-    return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-  }
-
-  // 토큰을 재발급 및 예외처리하는 메서드
-  private void refreshTokenAndHandleException(String tokenValue, HttpServletResponse response) {
-
-    try {
-      Claims info = jwtProvider.getMemberInfoFromExpiredToken(tokenValue);
-      UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(
-          info.getSubject());
-      RefreshTokenEntity refreshToken = tokenRepository.findByMemberId(
-          userDetails.getMemberId());
-
-      TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
-
-      if (refreshState.equals(TokenState.VALID)) {
-        refreshAccessToken(response, userDetails);
-      } else {
-        handleExpiredToken(response, refreshToken);
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
     }
-  }
 
-  // 이미 토큰 저장소에 있는 토큰이 없을 경우에 대한 메서드
-  private void handleExpiredToken(HttpServletResponse response, RefreshTokenEntity refreshToken) throws IOException {
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    // 토큰 저장소에 토큰이 남아 있을 경우에 대한 메서드
+    private void refreshAccessToken(HttpServletResponse response, Long memberId)
+        throws IOException {
 
-    String jsonResponse = objectMapper.writeValueAsString(
-        ResponseDto.of(HttpStatus.UNAUTHORIZED, "모든 토큰이 만료되었습니다.", null));
-    tokenRepository.deleteToken(refreshToken);
+        String newAccessToken = jwtProvider.generateRefreshToken(memberId, "User");
+        response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
+        response.setStatus(HttpServletResponse.SC_OK);
 
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
-    response.getWriter().write(jsonResponse);
-  }
+        String jsonResponse = objectMapper.writeValueAsString(
+            ResponseDto.ok("성공적으로 토큰을 발급하였습니다.", null));
 
-  // 토큰 저장소에 토큰이 남아 있을 경우에 대한 메서드
-  private void refreshAccessToken(HttpServletResponse response, UserDetailsImpl userDetails)
-      throws IOException {
-
-    String newAccessToken = jwtProvider.generateRefreshToken(userDetails.getMemberId(), "User");
-    response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
-    response.setStatus(HttpServletResponse.SC_OK);
-
-    String jsonResponse = objectMapper.writeValueAsString(
-        ResponseDto.ok("성공적으로 토큰을 발급하였습니다.", null));
-
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
-    response.getWriter().write(jsonResponse);
-  }
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
+    }
 }
