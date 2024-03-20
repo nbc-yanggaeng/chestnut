@@ -81,7 +81,7 @@ public class CardController {
         return ResponseDto.ok("카드 전체 조회 성공", responseList);
     }
 
-    @PostMapping("/cards/{cardId}/workers")
+    @PutMapping("/cards/{cardId}/workers")
     public ResponseEntity<ResponseDto<CardResponse>> updateWorkers(
         @PathVariable Long cardId,
         @RequestBody WorKerRequest worKerRequest,
@@ -92,7 +92,7 @@ public class CardController {
         return ResponseDto.ok("작업자 수정 완료", response);
     }
 
-    @PostMapping("/cards/{cardId}/move")
+    @PutMapping("/cards/{cardId}/move")
     public ResponseEntity<ResponseDto<CardResponse>> moveCard(
         @PathVariable Long cardId,
         @RequestBody CardMoveRequest request,

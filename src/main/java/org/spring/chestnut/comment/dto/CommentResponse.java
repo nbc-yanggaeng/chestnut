@@ -6,9 +6,11 @@ import org.spring.chestnut.comment.entity.CommentEntity;
 @Getter
 public class CommentResponse {
 
-    private final String content;
+    private Long memberId;
+    private String content;
 
     public CommentResponse(CommentEntity comment) {
+        this.memberId = comment.getMemberId();
         this.content = comment.getContent();
     }
 }
