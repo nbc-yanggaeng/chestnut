@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.dto.ColumnResponseDto;
+import org.spring.chestnut.column.dto.ColumnSequenceRequestDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
 import org.spring.chestnut.column.service.ColumnServiceImpl;
 import org.spring.chestnut.global.dto.ResponseDto;
@@ -74,12 +75,12 @@ public class ColumnController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/columns/{columnId}/{sequence}")
+    @PutMapping("/columns/{columnId}/sequence")
     public ResponseEntity<ResponseDto<ColumnResponseDto>> updateSecuence(
         @PathVariable("columnId") Long columnId,
-        @PathVariable("sequence") Integer sequence
+        @RequestBody ColumnSequenceRequestDto requestDto
     ) {
-        ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, sequence);
+        ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, requestDto);
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 

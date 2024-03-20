@@ -9,6 +9,7 @@ import org.spring.chestnut.board.repository.BoardRepository;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.dto.ColumnResponseDto;
+import org.spring.chestnut.column.dto.ColumnSequenceRequestDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
 import org.spring.chestnut.column.reposiotry.ColumnRepository;
 import org.spring.chestnut.global.execption.ColumnNotFoundException;
@@ -59,9 +60,10 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Override
     @Transactional
-    public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
+    public ColumnEntity updateSecuence(Long columnId, ColumnSequenceRequestDto requestDto) {
 
         ColumnEntity columnToMove = validateColumn(columnId);
+        Integer newSequence = requestDto.getSequence();
 
         Integer oldSequence = columnToMove.getSequence();
         List<ColumnEntity> columnsToShiftLeft = new ArrayList<>();
