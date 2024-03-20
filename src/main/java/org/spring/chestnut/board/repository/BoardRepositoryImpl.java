@@ -42,22 +42,28 @@ public class BoardRepositoryImpl implements BoardRepository {
 
         // 카드 조회 (컬럼별로 그룹화)
         Map<Long, List<CardEntity>> cardsByColumn = factory.selectFrom(cardEntity)
-            .where(cardEntity.columnId.in(columns.stream().map(ColumnEntity::getId).collect(Collectors.toList())))
+            .where(cardEntity.columnId.in(
+                columns.stream().map(ColumnEntity::getId).collect(Collectors.toList())))
             .fetch()
             .stream()
             .collect(Collectors.groupingBy(CardEntity::getColumnId));
 
         // 작업자 조회 (카드별로 그룹화)
         Map<Long, List<WorkerEntity>> workersByCard = factory.selectFrom(workerEntity)
-            .where(workerEntity.cardId.in(cardsByColumn.values().stream().flatMap(List::stream).map(CardEntity::getId).collect(Collectors.toList())))
+            .where(workerEntity.cardId.in(
+                cardsByColumn.values().stream().flatMap(List::stream).map(CardEntity::getId)
+                    .collect(Collectors.toList())))
             .fetch()
             .stream()
             .collect(Collectors.groupingBy(WorkerEntity::getCardId));
 
         // 최종 결과 구조화
         List<ColumnResponse> columnResponses = columns.stream().map(column -> {
-            List<CardResponse> cardResponses = cardsByColumn.getOrDefault(column.getId(), Collections.emptyList()).stream().map(card -> {
-                List<Long> workerIds = workersByCard.getOrDefault(card.getId(), Collections.emptyList()).stream().map(WorkerEntity::getId).collect(Collectors.toList());
+            List<CardResponse> cardResponses = cardsByColumn.getOrDefault(column.getId(),
+                Collections.emptyList()).stream().map(card -> {
+                List<Long> workerIds = workersByCard.getOrDefault(card.getId(),
+                        Collections.emptyList()).stream().map(WorkerEntity::getId)
+                    .collect(Collectors.toList());
                 return new CardResponse(card, workerIds); // CardResponse 생성자에 필요한 데이터 전달
             }).collect(Collectors.toList());
             return new ColumnResponse(column, cardResponses); // ColumnResponse 생성자에 필요한 데이터 전달
