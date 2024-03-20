@@ -100,12 +100,11 @@ public class ColumnServiceImpl implements ColumnService {
 
         List<ColumnResponseDto> columnResponseDtoList = columnEntityList.stream().map(
             x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
-
         return new ColumnListResponseDto(boardId, columnResponseDtoList);
     }
-
     private ColumnEntity validateColumn(Long columnId) {
         return columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
     }
 }
+
