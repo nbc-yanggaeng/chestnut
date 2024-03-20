@@ -6,8 +6,6 @@ import org.spring.chestnut.column.entity.ColumnEntity;
 
 public interface ColumnRepository {
 
-    List<ColumnEntity> findAllByBoardId(Long boardId);
-
     List<ColumnEntity> findBySequenceBetween(int startSequence, Integer endSequence);
 
     ColumnEntity save(ColumnEntity newColumn);
@@ -19,4 +17,6 @@ public interface ColumnRepository {
     void saveAll(List<ColumnEntity> columnsToShiftLeft);
 
     Optional<ColumnEntity> findTopByBoardIdOrderBySequenceDesc(Long id);
+
+    List<ColumnEntity> findAllByBoardIdOrderBySequence(Long boardId);
 }
