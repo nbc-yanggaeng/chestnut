@@ -7,13 +7,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerAdvice {
-    @ExceptionHandler({
-        ColumnNotFoundException.class,
-    })
-    public ResponseEntity<ResponseDto> BadRequestExceptionHandler(Exception e) {
+
+    @ExceptionHandler(ColumnNotFoundException.class)
+    public ResponseEntity<ResponseDto<Void>> BadRequestExceptionHandler(Exception e) {
+        return ResponseDto.badRequest(e.getMessage());
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ResponseDto<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<ResponseDto<Void>> handleIllegalArgumentException(
+        IllegalArgumentException e) {
         return ResponseDto.badRequest(e.getMessage());
     }
 }
