@@ -45,7 +45,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto) {
-        ColumnEntity column = columnRepository.findById(columnId)
+        ColumnEntity column = (ColumnEntity) columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
 
         column.setTitle(requestDto.getTitle());
@@ -61,7 +61,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public ColumnEntity updateSecuence(Long columnId, Integer newSequence) {
-        ColumnEntity columnToMove = columnRepository.findById(columnId)
+        ColumnEntity columnToMove = (ColumnEntity) columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
 
         Integer oldSequence = columnToMove.getSequence();
