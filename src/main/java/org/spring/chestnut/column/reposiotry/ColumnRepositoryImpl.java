@@ -14,16 +14,6 @@ public class ColumnRepositoryImpl implements ColumnRepository {
     private final ColumnJpaRepository columnJpaRepository;
 
     @Override
-    public Integer countByBoardId(Long boardId) {
-        return columnJpaRepository.countByBoardId(boardId);
-    }
-
-    @Override
-    public List<ColumnEntity> findAllByBoardId(Long boardId) {
-        return columnJpaRepository.findAllByBoardId(boardId);
-    }
-
-    @Override
     public List<ColumnEntity> findBySequenceBetween(int startSequence, Integer endSequence) {
         return columnJpaRepository.findBySequenceBetween(startSequence, endSequence);
     }
@@ -41,6 +31,16 @@ public class ColumnRepositoryImpl implements ColumnRepository {
     @Override
     public void saveAll(List<ColumnEntity> columnsToShiftLeft) {
         columnJpaRepository.saveAll(columnsToShiftLeft);
+    }
+
+    @Override
+    public Optional<ColumnEntity> findTopByBoardIdOrderBySequenceDesc(Long id) {
+        return columnJpaRepository.findTopByBoardIdOrderBySequenceDesc(id);
+    }
+
+    @Override
+    public List<ColumnEntity> findAllByBoardIdOrderBySequence(Long boardId) {
+        return columnJpaRepository.findAllByBoardIdOrderBySequence(boardId);
     }
 
     @Override
