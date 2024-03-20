@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.entity.BoardEntity;
 import org.spring.chestnut.board.repository.BoardRepository;
+import org.spring.chestnut.board.repository.CollaboratorRepository;
 import org.spring.chestnut.column.dto.ColumnListResponseDto;
 import org.spring.chestnut.column.dto.ColumnRequestDto;
 import org.spring.chestnut.column.dto.ColumnResponseDto;
@@ -13,6 +14,7 @@ import org.spring.chestnut.column.dto.ColumnSequenceRequestDto;
 import org.spring.chestnut.column.entity.ColumnEntity;
 import org.spring.chestnut.column.reposiotry.ColumnRepository;
 import org.spring.chestnut.global.execption.ColumnNotFoundException;
+import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,12 +23,16 @@ public class ColumnServiceImpl implements ColumnService {
 
     private final ColumnRepository columnRepository;
     private final BoardRepository boardRepository;
+    private final CollaboratorRepository collaboratorRepository;
 
     @Override
     @Transactional
-    public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto) {
+    public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto, UserDetailsImpl userDetails) {
         // boardId로 BoardEntity 존재 여부 확인
         BoardEntity board = boardRepository.findById(boardId);
+
+        // 협력자인지 확인
+        validateCollaborator(userDetails.getMemberId(), boardId);
 
         // 해당 보드의 마지막 컬럼 순서를 찾기
         ColumnEntity lastColumn = columnRepository.findTopByBoardIdOrderBySequenceDesc(
@@ -46,23 +52,35 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Override
     @Transactional
-    public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto) {
+    public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto, UserDetailsImpl userDetails) {
         ColumnEntity column = validateColumn(columnId);
+
+        // 협력자인지 확인
+        validateCollaborator(userDetails.getMemberId(),  column.getBoardId());
+
         column.setTitle(requestDto.getTitle());
         return columnRepository.save(column);
     }
 
     @Override
     @Transactional
-    public void deleteColumn(Long columnId) {
+    public void deleteColumn(Long columnId, UserDetailsImpl userDetails) {
+        // 협력자인지 확인
+        ColumnEntity columnEntity = validateColumn(columnId);
+        validateCollaborator(userDetails.getMemberId(),columnEntity.getBoardId());
+
         columnRepository.deleteById(columnId);
     }
 
     @Override
     @Transactional
-    public ColumnEntity updateSecuence(Long columnId, ColumnSequenceRequestDto requestDto) {
+    public ColumnEntity updateSecuence(Long columnId, ColumnSequenceRequestDto requestDto, UserDetailsImpl userDetails) {
 
         ColumnEntity columnToMove = validateColumn(columnId);
+
+        // 협력자인지 확인
+        validateCollaborator(userDetails.getMemberId(), columnToMove.getBoardId());
+
         Integer newSequence = requestDto.getSequence();
 
         Integer oldSequence = columnToMove.getSequence();
@@ -96,9 +114,12 @@ public class ColumnServiceImpl implements ColumnService {
     }
 
     @Override
-    public ColumnListResponseDto getColumn(Long boardId) {
+    public ColumnListResponseDto getColumn(Long boardId, UserDetailsImpl userDetails) {
         List<ColumnEntity> columnEntityList = columnRepository.findAllByBoardIdOrderBySequence(
             boardId);
+
+        // 협력자인지 확인
+        validateCollaborator(userDetails.getMemberId(),boardId);
 
         List<ColumnResponseDto> columnResponseDtoList = columnEntityList.stream().map(
             x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
@@ -107,6 +128,13 @@ public class ColumnServiceImpl implements ColumnService {
     private ColumnEntity validateColumn(Long columnId) {
         return columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
+    }
+
+    private void validateCollaborator(Long memberId, Long boardId){
+        // 이미 협력자인지 확인
+        if(collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+            throw new IllegalArgumentException("이미 협력자인 멤버입니다");
+        }
     }
 }
 
