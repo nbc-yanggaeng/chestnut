@@ -48,7 +48,8 @@ public class ColumnController {
         @RequestBody ColumnRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ColumnEntity createdColumn = columnServiceImpl.createColumn(boardId, requestDto, userDetails);
+        ColumnEntity createdColumn = columnServiceImpl.createColumn(boardId, requestDto,
+            userDetails);
 
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(createdColumn.getId(),
             createdColumn.getTitle(), createdColumn.getSequence());
@@ -62,7 +63,8 @@ public class ColumnController {
         @RequestBody ColumnRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ColumnEntity updatedColumn = columnServiceImpl.updateColumn(columnId, requestDto, userDetails);
+        ColumnEntity updatedColumn = columnServiceImpl.updateColumn(columnId, requestDto,
+            userDetails);
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 
@@ -85,7 +87,8 @@ public class ColumnController {
         @RequestBody ColumnSequenceRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, requestDto, userDetails);
+        ColumnEntity updatedColumn = columnServiceImpl.updateSecuence(columnId, requestDto,
+            userDetails);
         ColumnResponseDto columnResponseDto = new ColumnResponseDto(updatedColumn.getId(),
             updatedColumn.getTitle(), updatedColumn.getSequence());
 

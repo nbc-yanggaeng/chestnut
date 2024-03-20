@@ -27,7 +27,8 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Override
     @Transactional
-    public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto, UserDetailsImpl userDetails) {
+    public ColumnEntity createColumn(Long boardId, ColumnRequestDto requestDto,
+        UserDetailsImpl userDetails) {
         // boardId로 BoardEntity 존재 여부 확인
         BoardEntity board = boardRepository.findById(boardId);
 
@@ -52,11 +53,12 @@ public class ColumnServiceImpl implements ColumnService {
 
     @Override
     @Transactional
-    public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto, UserDetailsImpl userDetails) {
+    public ColumnEntity updateColumn(Long columnId, ColumnRequestDto requestDto,
+        UserDetailsImpl userDetails) {
         ColumnEntity column = validateColumn(columnId);
 
         // 협력자인지 확인
-        validateCollaborator(userDetails.getMemberId(),  column.getBoardId());
+        validateCollaborator(userDetails.getMemberId(), column.getBoardId());
 
         column.setTitle(requestDto.getTitle());
         return columnRepository.save(column);
@@ -67,14 +69,15 @@ public class ColumnServiceImpl implements ColumnService {
     public void deleteColumn(Long columnId, UserDetailsImpl userDetails) {
         // 협력자인지 확인
         ColumnEntity columnEntity = validateColumn(columnId);
-        validateCollaborator(userDetails.getMemberId(),columnEntity.getBoardId());
+        validateCollaborator(userDetails.getMemberId(), columnEntity.getBoardId());
 
         columnRepository.deleteById(columnId);
     }
 
     @Override
     @Transactional
-    public ColumnEntity updateSecuence(Long columnId, ColumnSequenceRequestDto requestDto, UserDetailsImpl userDetails) {
+    public ColumnEntity updateSecuence(Long columnId, ColumnSequenceRequestDto requestDto,
+        UserDetailsImpl userDetails) {
 
         ColumnEntity columnToMove = validateColumn(columnId);
 
@@ -119,20 +122,21 @@ public class ColumnServiceImpl implements ColumnService {
             boardId);
 
         // 협력자인지 확인
-        validateCollaborator(userDetails.getMemberId(),boardId);
+        validateCollaborator(userDetails.getMemberId(), boardId);
 
         List<ColumnResponseDto> columnResponseDtoList = columnEntityList.stream().map(
             x -> new ColumnResponseDto(x.getId(), x.getTitle(), x.getSequence())).toList();
         return new ColumnListResponseDto(boardId, columnResponseDtoList);
     }
+
     private ColumnEntity validateColumn(Long columnId) {
         return columnRepository.findById(columnId)
             .orElseThrow(() -> new ColumnNotFoundException("Column을 찾을 수 없습니다."));
     }
 
-    private void validateCollaborator(Long memberId, Long boardId){
+    private void validateCollaborator(Long memberId, Long boardId) {
         // 이미 협력자인지 확인
-        if(collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+        if (collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
             throw new IllegalArgumentException("이미 협력자인 멤버입니다");
         }
     }
