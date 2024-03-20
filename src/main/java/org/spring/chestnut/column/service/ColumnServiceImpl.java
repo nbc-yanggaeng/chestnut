@@ -28,7 +28,12 @@ public class ColumnServiceImpl implements ColumnService {
         BoardEntity board = boardRepository.findById(boardId);
 
         // 해당 보드의 마지막 컬럼 순서를 찾기
-        Integer lastSequence = columnRepository.countByBoardId(board.getId());
+        ColumnEntity lastColumn = columnRepository.findTopByBoardIdOrderBySequenceDesc(
+                board.getId())
+            .orElse(null); // 마지막 컬럼이 없는 경우를 대비해 null 처리
+
+        int lastSequence =
+            (lastColumn != null) ? lastColumn.getSequence() : 0; // 마지막 컬럼이 없다면 0으로 시작
 
         // 새 컬럼 객체 생성
         ColumnEntity newColumn = new ColumnEntity(requestDto.getTitle(), lastSequence + 1,
