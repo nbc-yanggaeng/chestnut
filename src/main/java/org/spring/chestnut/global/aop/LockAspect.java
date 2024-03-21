@@ -23,17 +23,21 @@ public class LockAspect {
         RLock lock = redissonClient.getFairLock(lockable.value());
         try {
             // 락 획득 시도
-            if (lock.tryLock(5000, 100, TimeUnit.MILLISECONDS)) {
-                log.info("get lock");
-                return joinPoint.proceed();
+            if (lock.tryLock(lockable.waitTime(), lockable.leaseTime(), TimeUnit.SECONDS)) {
+                try {
+                    log.info("get lock");
+                    return joinPoint.proceed();
+                } finally {
+                    log.info("unlock");
+                    lock.unlock();
+                }
+            } else {
+                // 락 획득에 실패했을 때의 처리
+                throw new RuntimeException("락 획득 실패");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("lock 획득 실패2");
-        } finally {
-            log.info("unlock");
-            lock.unlock();
+            throw new RuntimeException("Interrupt 발생");
         }
-        return null;
     }
 }
