@@ -27,7 +27,7 @@ public class CardController {
 
     private final CardService cardService;
 
-    @PostMapping("/board/{boardId}/columns/{columnId}/cards")
+    @PostMapping("/boards/{boardId}/columns/{columnId}/cards")
     public ResponseEntity<ResponseDto<CardResponse>> createCard(
         @PathVariable Long boardId,
         @PathVariable Long columnId,

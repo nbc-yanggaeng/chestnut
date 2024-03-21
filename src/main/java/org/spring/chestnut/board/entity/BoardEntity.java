@@ -40,7 +40,8 @@ public class BoardEntity extends Timestamped {
     @Column(nullable = false)
     private Long createMemberId;
 
-    public static BoardEntity of(String title, String backgroundColor, String description, Long memberId) {
+    public static BoardEntity of(String title, String backgroundColor, String description,
+        Long memberId) {
         return BoardEntity.builder()
             .title(title)
             .backgroundColor(backgroundColor)

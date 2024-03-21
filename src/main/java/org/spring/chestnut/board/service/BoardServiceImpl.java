@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.spring.chestnut.board.dto.request.BoardDto;
 import org.spring.chestnut.board.dto.request.BoardRequestDto;
+import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.entity.BoardEntity;
 import org.spring.chestnut.board.entity.CollaboratorEntity;
 import org.spring.chestnut.board.repository.BoardRepository;
@@ -18,15 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class BoardServiceImpl implements BoardService{
+public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final CollaboratorRepository collaboratorRepository;
     private final MemberRepository memberRepository;
 
     @Override
-    public void getBoard(Long boardId, UserDetailsImpl userDetails) {
-
+    public BoardResponse getBoard(Long boardId, UserDetailsImpl userDetails) {
+        validateCreateBoardMember(boardId, userDetails.getMemberId());
+        return boardRepository.findAllByBoardId(boardId);
     }
 
     @Override
@@ -34,7 +36,8 @@ public class BoardServiceImpl implements BoardService{
     public void createBoard(BoardRequestDto requestDto, UserDetailsImpl userDetails) {
         Long memberId = userDetails.getMemberId();
         String description = Optional.ofNullable(requestDto.getDescription()).orElse("");
-        BoardDto boardDto = new BoardDto(requestDto.getTitle(), requestDto.getBackgroundColor(), description, memberId);
+        BoardDto boardDto = new BoardDto(requestDto.getTitle(), requestDto.getBackgroundColor(),
+            description, memberId);
         BoardEntity board = boardRepository.save(boardDto);
 
         // Collaborator 에 Board 생성자 추가
@@ -72,7 +75,7 @@ public class BoardServiceImpl implements BoardService{
     public void inviteMember(Long boardId, Long memberId, UserDetailsImpl userDetails) {
         // 보드 생성자가 초대하는지 확인
         BoardEntity board = boardRepository.findById(boardId);
-        if(!Objects.equals(userDetails.getMemberId(), board.getCreateMemberId())) {
+        if (!Objects.equals(userDetails.getMemberId(), board.getCreateMemberId())) {
             throw new IllegalArgumentException("보드 생성 멤버가 아닙니다");
         }
 
@@ -82,7 +85,7 @@ public class BoardServiceImpl implements BoardService{
         );
 
         // 이미 협력자인지 확인
-        if(collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+        if (collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
             throw new IllegalArgumentException("이미 협력자인 멤버입니다");
         }
 
@@ -96,7 +99,7 @@ public class BoardServiceImpl implements BoardService{
 
     private void validateCreateBoardMember(Long boardId, Long memberId) {
         BoardEntity board = boardRepository.findById(boardId);
-        if(!Objects.equals(memberId, board.getCreateMemberId())) {
+        if (!Objects.equals(memberId, board.getCreateMemberId())) {
             throw new IllegalArgumentException("보드 생성 멤버가 아닙니다");
         }
     }
