@@ -128,7 +128,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    @Lockable
+    @Lockable(value = "moveCard", waitTime = 5000, leaseTime = 100)
     public CardResponse moveCard(Long cardId, CardMoveRequest request,
         UserDetailsImpl userDetails) {
 
@@ -144,5 +144,4 @@ public class CardServiceImpl implements CardService {
 
         return new CardResponse(save, workers);
     }
-
 }
