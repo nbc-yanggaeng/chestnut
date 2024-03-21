@@ -13,6 +13,7 @@ import org.spring.chestnut.card.repository.CardRepository;
 import org.spring.chestnut.card.repository.WorkerRepository;
 import org.spring.chestnut.global.execption.custom.NotFoundException;
 import org.spring.chestnut.global.execption.custom.WorkerException;
+import org.spring.chestnut.global.aop.Lockable;
 import org.spring.chestnut.global.security.UserDetailsImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -127,6 +128,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    @Lockable
     public CardResponse moveCard(Long cardId, CardMoveRequest request,
         UserDetailsImpl userDetails) {
 
