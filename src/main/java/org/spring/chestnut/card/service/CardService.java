@@ -6,20 +6,19 @@ import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.dto.WorKerRequest;
 import org.spring.chestnut.global.security.UserDetailsImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CardService {
 
     CardResponse createCard(Long boardId, Long columnId, CardRequest request,
-        UserDetails member);
+        UserDetailsImpl userDetails);
 
-    CardResponse updateCard(Long cardId, CardRequest request, UserDetails member);
+    CardResponse updateCard(Long cardId, CardRequest request, UserDetailsImpl userDetails);
 
-    void deleteCard(Long cardId, UserDetails member);
+    void deleteCard(Long cardId, UserDetailsImpl userDetails);
 
-    CardResponse getCardByCardId(Long cardId);
+    CardResponse getCardByCardId(Long cardId, UserDetailsImpl userDetails);
 
-    List<CardResponse> getCardsByColumnId(Long columnId);
+    List<CardResponse> getCardsByColumnId(Long columnId, UserDetailsImpl userDetails);
 
     CardResponse updateWorkers(Long cardId, WorKerRequest worKerRequest,
         UserDetailsImpl userDetails);
