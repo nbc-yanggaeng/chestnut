@@ -1,7 +1,9 @@
 package org.spring.chestnut.global.execption;
 
+import jakarta.persistence.EntityExistsException;
 import org.spring.chestnut.global.dto.ResponseDto;
 import org.spring.chestnut.global.execption.custom.NotFoundException;
+import org.spring.chestnut.global.execption.custom.NotMatchException;
 import org.spring.chestnut.global.execption.custom.WorkerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -36,5 +38,15 @@ public class ControllerAdvice {
     public ResponseEntity<ResponseDto<Void>> handleMissingServletRequestParameterException(
         MissingServletRequestParameterException e) {
         return ResponseDto.badRequest("올바른 파라미터 값이 아닙니다.");
+    }
+
+    @ExceptionHandler(NotMatchException.class)
+    public ResponseEntity<ResponseDto<Void>> notMatchException(Exception e) {
+        return ResponseDto.badRequest(e.getMessage());
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ResponseDto<Void>> existsException(Exception e) {
+        return ResponseDto.badRequest(e.getMessage());
     }
 }

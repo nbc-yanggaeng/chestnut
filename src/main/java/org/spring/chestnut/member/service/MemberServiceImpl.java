@@ -1,7 +1,10 @@
 package org.spring.chestnut.member.service;
 
+import jakarta.persistence.EntityExistsException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.global.execption.custom.NotFoundException;
+import org.spring.chestnut.global.execption.custom.NotMatchException;
 import org.spring.chestnut.global.jwt.JwtProvider;
 import org.spring.chestnut.global.jwt.entity.RefreshTokenEntity;
 import org.spring.chestnut.global.jwt.repository.TokenRepository;
@@ -32,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponseDto signup(SignupRequestDto dto) {
 
         if (memberRepository.checkEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("해당 이메일이 존재합니다.");
+            throw new EntityExistsException("해당 이메일이 존재합니다.");
         }
 
         SignupDto signupDto = new SignupDto(dto.getEmail(), dto.getPassword());
@@ -43,11 +46,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public LoginResponseDto login(LoginRequestDto dto) {
         MemberEntity member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(
-            () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+            () -> new NotFoundException("해당 유저가 존재하지 않습니다.")
         );
 
         if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
         String token = generateToken(member.getId());
@@ -65,11 +68,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updatePassword(Long memberId, UpdateRequestDto dto) {
         MemberEntity member = memberRepository.findByMemberId(memberId).orElseThrow(
-            () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+            () -> new NotFoundException("해당 유저가 존재하지 않습니다.")
         );
 
         if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
         UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto(dto);
