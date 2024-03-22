@@ -2,6 +2,7 @@ package org.spring.chestnut.member.repository;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.global.execption.custom.NotFoundException;
 import org.spring.chestnut.member.dto.request.SignupDto;
 import org.spring.chestnut.member.dto.response.MemberResponseDto;
 import org.spring.chestnut.member.entity.MemberEntity;
@@ -46,7 +47,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public void deleteMember(Long memberId) {
         MemberEntity member = memberJpaRepository.findById(memberId).orElseThrow(
-            () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+            () -> new NotFoundException("해당 유저가 존재하지 않습니다.")
         );
 
         memberJpaRepository.deleteCollaborator(memberId);

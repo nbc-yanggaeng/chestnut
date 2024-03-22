@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.spring.chestnut.global.entity.Timestamped;
+import org.spring.chestnut.global.execption.custom.NotMatchException;
 
 @Getter
 @Entity
@@ -43,7 +44,7 @@ public class MemberEntity extends Timestamped {
 
     public void updatePassword(String password) {
         if (password.equals(this.password)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new NotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
         this.password = password;
