@@ -62,3 +62,10 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+	archiveBaseName.set('trelloServer')
+}
+jar{
+	archiveBaseName.set('trelloServer')
+}
