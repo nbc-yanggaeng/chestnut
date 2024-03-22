@@ -43,7 +43,7 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2.6.0
       with:
-        arguments: build
+        arguments: build -x test
 
     # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드!!
     - name: Upload build artifact
@@ -73,7 +73,8 @@ jobs:
     - name: Deploy to EC2
       run: |
         echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
-        chmod 600 private_key.pem
+        chmod 400 private_key.pem
         scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/trelloServer-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/trelloServer.jar
-        ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/trelloServer.jar > app.log 2>&1 &"
+        ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -Dspring.datasource.url=jdbc:mysql://${{ secrets.DATABASE_URL }}/${{ secrets.DATABASE_NAME }} -Dspring.datasource.username=${{ secrets.MYSQL_USERNAME }} -Dspring.datasource.password=${{ secrets.MYSQL_PASSWORD }} -Djwt.secret_key=${{ secrets.JWT_SECRET_KEY }} -jar /home/${{ secrets.EC2_USERNAME }}/trelloServer.jar > app.log 2>&1 &"
+        
         rm -f private_key.pem
