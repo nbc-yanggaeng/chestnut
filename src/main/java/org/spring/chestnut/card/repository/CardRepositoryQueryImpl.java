@@ -25,7 +25,7 @@ public class CardRepositoryQueryImpl implements CardRepositoryQuery {
             .from(cardEntity)
             .leftJoin(workerEntity).on(cardEntity.id.eq(workerEntity.cardId))
             .where(cardEntity.columnId.eq(columnId))
-            .orderBy(cardEntity.deadline.desc())
+            .orderBy(cardEntity.deadline.asc())
             .orderBy(cardEntity.createdAt.asc())
             .orderBy(workerEntity.memberId.asc())
             .fetch();

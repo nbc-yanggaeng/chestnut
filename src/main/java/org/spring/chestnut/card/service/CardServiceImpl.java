@@ -96,6 +96,10 @@ public class CardServiceImpl implements CardService {
     public List<CardResponse> getCardsByColumnId(Long columnId, UserDetailsImpl userDetails) {
 
         Long boardId = cardRepository.findBoardIdByColumnId(columnId);
+        if (boardId == null) {
+            throw new NotFoundException("보드 데이터가 없습니다.");
+        }
+
         if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(),
             boardId)) {
             throw new IllegalArgumentException("협력자만 가능합니다");
