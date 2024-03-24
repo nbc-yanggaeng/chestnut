@@ -3,6 +3,7 @@ package org.spring.chestnut.card.service;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.spring.chestnut.board.repository.CollaboratorRepository;
 import org.spring.chestnut.card.dto.CardMoveRequest;
 import org.spring.chestnut.card.dto.CardRequest;
 import org.spring.chestnut.card.dto.CardResponse;
@@ -11,11 +12,10 @@ import org.spring.chestnut.card.entity.CardEntity;
 import org.spring.chestnut.card.entity.WorkerEntity;
 import org.spring.chestnut.card.repository.CardRepository;
 import org.spring.chestnut.card.repository.WorkerRepository;
+import org.spring.chestnut.global.aop.Lockable;
 import org.spring.chestnut.global.execption.custom.NotFoundException;
 import org.spring.chestnut.global.execption.custom.WorkerException;
-import org.spring.chestnut.global.aop.Lockable;
 import org.spring.chestnut.global.security.UserDetailsImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +26,16 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final WorkerRepository workerRepository;
+    private final CollaboratorRepository collaboratorRepository;
 
     @Override
     public CardResponse createCard(Long boardId, Long columnId, CardRequest request,
-        UserDetails member) {
+        UserDetailsImpl userDetails) {
+
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(),
+            boardId)) {
+            throw new IllegalArgumentException("협력자만 가능합니다");
+        }
 
         CardEntity cardEntity = CardEntity.of(columnId, request);
 
@@ -40,10 +46,12 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardResponse updateCard(Long cardId, CardRequest request,
-        UserDetails member) {
+        UserDetailsImpl userDetails) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
             .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
+
+        isCollaborator(cardId, userDetails.getMemberId());
 
         cardEntity.updateCard(request);
         CardEntity updateCard = cardRepository.save(cardEntity);
@@ -56,10 +64,12 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void deleteCard(Long cardId, UserDetails member) {
+    public void deleteCard(Long cardId, UserDetailsImpl userDetails) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
             .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
+
+        isCollaborator(cardId, userDetails.getMemberId());
 
         cardRepository.delete(cardEntity);
         workerRepository.deleteByCardId(cardId);
@@ -67,10 +77,12 @@ public class CardServiceImpl implements CardService {
 
     @Override
     @Transactional(readOnly = true)
-    public CardResponse getCardByCardId(Long cardId) {
+    public CardResponse getCardByCardId(Long cardId, UserDetailsImpl userDetails) {
 
         CardEntity cardEntity = cardRepository.findById(cardId)
             .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
+
+        isCollaborator(cardId, userDetails.getMemberId());
 
         List<Long> workers = workerRepository.findByCardId(cardId).stream()
             .map(WorkerEntity::getMemberId)
@@ -81,7 +93,18 @@ public class CardServiceImpl implements CardService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CardResponse> getCardsByColumnId(Long columnId) {
+    public List<CardResponse> getCardsByColumnId(Long columnId, UserDetailsImpl userDetails) {
+
+        Long boardId = cardRepository.findBoardIdByColumnId(columnId);
+        if (boardId == null) {
+            throw new NotFoundException("보드 데이터가 없습니다.");
+        }
+
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(),
+            boardId)) {
+            throw new IllegalArgumentException("협력자만 가능합니다");
+        }
+
         return cardRepository.findAllCardsByColumnId(columnId);
     }
 
@@ -92,14 +115,27 @@ public class CardServiceImpl implements CardService {
         CardEntity card = cardRepository.findById(cardId)
             .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
+        Long boardId = cardRepository.findBoardIdByCardId(cardId);
+
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(),
+            boardId)) {
+            throw new IllegalArgumentException("협력자만 가능합니다");
+        }
+
         List<WorkerEntity> workerLists = workerRepository.findByCardIdOrderByMemberId(cardId);
 
         List<Long> collect = workerLists.stream()
             .map(WorkerEntity::getMemberId)
             .toList();
 
-        if (worKerRequest.getAddRequest() != null) {
+        if (worKerRequest.getAddRequest() != null
+            && worKerRequest.getAddRequest().getWorkerList().size() != 0) {
             List<Long> addRequest = worKerRequest.getAddRequest().getWorkerList();
+
+            if (!collaboratorRepository.existsByBoardIdAndMemberIdIn(boardId, addRequest)) {
+                throw new IllegalArgumentException("협력자만 등록 가능합니다");
+            }
+
             if (!addRequest.isEmpty() && new HashSet<>(collect).containsAll(addRequest)) {
                 throw new WorkerException("이미 있는 작업자입니다.");
             } else {
@@ -135,6 +171,8 @@ public class CardServiceImpl implements CardService {
         CardEntity card = cardRepository.findById(cardId)
             .orElseThrow(() -> new NotFoundException("없는 카드입니다."));
 
+        isCollaborator(cardId, userDetails.getMemberId());
+
         card.moveCard(request.getMoveTo());
         CardEntity save = cardRepository.save(card);
 
@@ -143,5 +181,13 @@ public class CardServiceImpl implements CardService {
             .toList();
 
         return new CardResponse(save, workers);
+    }
+
+    private void isCollaborator(Long cardId, Long memberId) {
+        Long boardId = cardRepository.findBoardIdByCardId(cardId);
+
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(memberId, boardId)) {
+            throw new IllegalArgumentException("협력자만 가능합니다");
+        }
     }
 }

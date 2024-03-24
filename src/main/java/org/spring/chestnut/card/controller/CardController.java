@@ -65,18 +65,20 @@ public class CardController {
 
     @GetMapping("/cards/{cardId}")
     public ResponseEntity<ResponseDto<CardResponse>> getCardByCardId(
-        @PathVariable Long cardId
+        @PathVariable Long cardId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        CardResponse response = cardService.getCardByCardId(cardId);
+        CardResponse response = cardService.getCardByCardId(cardId, userDetails);
 
         return ResponseDto.ok("카드 조회 성공", response);
     }
 
-    @GetMapping("/column/{columnId}/cards")
+    @GetMapping("/columns/{columnId}/cards")
     public ResponseEntity<ResponseDto<List<CardResponse>>> getCardsByColumnId(
-        @PathVariable Long columnId
+        @PathVariable Long columnId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        List<CardResponse> responseList = cardService.getCardsByColumnId(columnId);
+        List<CardResponse> responseList = cardService.getCardsByColumnId(columnId, userDetails);
 
         return ResponseDto.ok("카드 전체 조회 성공", responseList);
     }
