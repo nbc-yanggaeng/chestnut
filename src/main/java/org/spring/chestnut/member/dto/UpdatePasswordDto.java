@@ -1,6 +1,7 @@
 package org.spring.chestnut.member.dto;
 
 import lombok.Getter;
+import org.spring.chestnut.global.execption.custom.NotMatchException;
 import org.spring.chestnut.member.dto.request.UpdateRequestDto;
 
 @Getter
@@ -18,7 +19,7 @@ public class UpdatePasswordDto {
 
     public void checkChangePasswordEquals() {
         if (!changePassword.equals(rechangePassword)) {
-            throw new IllegalArgumentException("바꿀 비밀번호가 일치하지 않습니다.");
+            throw new NotMatchException("바꿀 비밀번호가 일치하지 않습니다.");
         }
     }
 }
