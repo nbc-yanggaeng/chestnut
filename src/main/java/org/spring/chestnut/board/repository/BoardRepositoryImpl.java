@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.dto.request.BoardDto;
@@ -34,6 +35,11 @@ public class BoardRepositoryImpl implements BoardRepository {
         BoardEntity board = factory.selectFrom(boardEntity)
             .where(boardEntity.id.eq(boardId))
             .fetchOne();
+
+        // 보드가 존재하지 않는경우 exception
+        if(Objects.isNull(board)) {
+            throw new IllegalArgumentException("존재하지 않는 보드입니다");
+        }
 
         // 컬럼 조회
         List<ColumnEntity> columns = factory.selectFrom(columnEntity)

@@ -27,7 +27,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponse getBoard(Long boardId, UserDetailsImpl userDetails) {
-        validateCreateBoardMember(boardId, userDetails.getMemberId());
+        // 협력자인지 확인
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(), boardId)) {
+            throw new IllegalArgumentException("협력자가 아닌 멤버입니다");
+        }
         return boardRepository.findAllByBoardId(boardId);
     }
 
