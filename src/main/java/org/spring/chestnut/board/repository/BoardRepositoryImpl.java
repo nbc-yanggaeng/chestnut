@@ -62,7 +62,7 @@ public class BoardRepositoryImpl implements BoardRepository {
             List<CardResponse> cardResponses = cardsByColumn.getOrDefault(column.getId(),
                 Collections.emptyList()).stream().map(card -> {
                 List<Long> workerIds = workersByCard.getOrDefault(card.getId(),
-                        Collections.emptyList()).stream().map(WorkerEntity::getId)
+                        Collections.emptyList()).stream().map(WorkerEntity::getMemberId)
                     .collect(Collectors.toList());
                 return new CardResponse(card, workerIds); // CardResponse 생성자에 필요한 데이터 전달
             }).collect(Collectors.toList());
