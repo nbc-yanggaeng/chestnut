@@ -2,7 +2,10 @@
 
 - **Method**: GET
 - **Endpoint**: /boards
-- **Headers**: `Authorization: 토큰`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
 - **Response Body**:
   ```json
   {
@@ -34,7 +37,10 @@
 
 - **Method**: GET
 - **Endpoint**: /boards/{boardId}
-- **Headers**: `Authorization: 토큰`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
 - **Response Body**:
   ```json
   {
@@ -61,26 +67,50 @@
 
 - **Method**: POST
 - **Endpoint**: /boards
-- **Headers**: `Authorization: 토큰`
-- **Response Body**: `{ "message": "보드를 생성했습니다." }`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
+- **Response Body**: 
+  ```json
+  { "message": "보드를 생성했습니다." }
+  ```
 
 ## 보드 수정
 
 - **Method**: PUT
 - **Endpoint**: /boards/{boardId}
-- **Headers**: `Authorization: 토큰`
-- **Response Body**: `{ "message": "보드를 수정했습니다." }`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
+- **Response Body**: 
+  ```json
+  { "message": "보드를 수정했습니다." }
+  ```
 
 ## 보드 삭제
 
 - **Method**: DELETE
 - **Endpoint**: /boards/{boardId}
-- **Headers**: `Authorization: 토큰`
-- **Response Body**: `{ "message": "보드를 삭제했습니다." }`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
+- **Response Body**: 
+  ```json
+  { "message": "보드를 삭제했습니다." }
+  ```
 
 ## 보드 초대
 
 - **Method**: POST
 - **Endpoint**: /boards/{boardId}/invite/{userId}
-- **Headers**: `Authorization: 토큰`
-- **Response Body**: `{ "message": "유저를 초대했습니다." }`
+- **Headers**: 
+  ```
+  Authorization: 토큰
+  ```
+- **Response Body**:
+  ```json
+  { "message": "유저를 초대했습니다." }
+  ```
