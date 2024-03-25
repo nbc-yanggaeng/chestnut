@@ -23,7 +23,7 @@ public class LockAspect {
         RLock lock = redissonClient.getFairLock(lockable.value());
         try {
             // 락 획득 시도
-            if (lock.tryLock(lockable.waitTime(), lockable.leaseTime(), TimeUnit.SECONDS)) {
+            if (lock.tryLock(lockable.waitTime(), lockable.leaseTime(), TimeUnit.MILLISECONDS)) {
                 try {
                     log.info("get lock");
                     return joinPoint.proceed();

@@ -101,7 +101,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             TokenState refreshState = jwtProvider.validateToken(refreshToken.getToken());
 
             if (refreshState.equals(TokenState.VALID)) {
-                refreshAccessToken(response, memberId);
+                refreshAccessToken(response, refreshToken);
             } else {
                 handleExpiredToken(response, refreshToken);
             }
@@ -125,15 +125,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     // 토큰 저장소에 토큰이 남아 있을 경우에 대한 메서드
-    private void refreshAccessToken(HttpServletResponse response, Long memberId)
+    private void refreshAccessToken(HttpServletResponse response, RefreshTokenEntity refreshToken)
         throws IOException {
 
-        String newAccessToken = jwtProvider.generateRefreshToken(memberId, "User");
-        response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newAccessToken);
+        String newToken = refreshToken.getToken();
+        response.addHeader(JwtProvider.AUTHORIZATION_ACCESS_TOKEN_HEADER_KEY, newToken);
         response.setStatus(HttpServletResponse.SC_OK);
 
         String jsonResponse = objectMapper.writeValueAsString(
             ResponseDto.ok("성공적으로 토큰을 발급하였습니다.", null));
+        tokenRepository.deleteToken(refreshToken);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
