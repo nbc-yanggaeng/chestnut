@@ -1,8 +1,10 @@
 package org.spring.chestnut.board.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.dto.request.BoardRequestDto;
+import org.spring.chestnut.board.dto.response.BoardListDto;
 import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.service.BoardServiceImpl;
 import org.spring.chestnut.global.dto.ResponseDto;
@@ -26,12 +28,20 @@ public class BoardController {
 
     private final BoardServiceImpl boardService;
 
+    @GetMapping()
+    public ResponseEntity<ResponseDto<List<BoardListDto>>> getBoardList(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        List<BoardListDto> response = boardService.getBoardList(userDetails.getMemberId());
+        return ResponseDto.ok("보드 리스트를 조회했습니다.", response);
+    }
+
     @GetMapping("/{boardId}")
     public ResponseEntity<ResponseDto<BoardResponse>> getBoard(
         @PathVariable Long boardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        BoardResponse response =  boardService.getBoard(boardId, userDetails);
+        BoardResponse response = boardService.getBoard(boardId, userDetails);
         return ResponseDto.ok("보드를 조회했습니다.", response);
     }
 

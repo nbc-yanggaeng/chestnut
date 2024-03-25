@@ -5,6 +5,7 @@ import static org.spring.chestnut.card.entity.QCardEntity.cardEntity;
 import static org.spring.chestnut.card.entity.QWorkerEntity.workerEntity;
 import static org.spring.chestnut.column.entity.QColumnEntity.columnEntity;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +14,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.spring.chestnut.board.dto.request.BoardDto;
+import org.spring.chestnut.board.dto.response.BoardListDto;
 import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.entity.BoardEntity;
+import org.spring.chestnut.board.entity.QBoardEntity;
 import org.spring.chestnut.card.dto.CardResponse;
 import org.spring.chestnut.card.entity.CardEntity;
 import org.spring.chestnut.card.entity.WorkerEntity;
@@ -30,6 +33,20 @@ public class BoardRepositoryImpl implements BoardRepository {
     private final JPAQueryFactory factory;
 
     @Override
+    public List<BoardListDto> findBoardsByMemberId(Long memberId) {
+        QBoardEntity qBoard = QBoardEntity.boardEntity;
+        return factory
+            .select(Projections.constructor(BoardListDto.class,
+                qBoard.id,
+                qBoard.title,
+                qBoard.description,
+                qBoard.backgroundColor))
+            .from(qBoard)
+            .where(qBoard.createMemberId.eq(memberId))
+            .fetch();
+    }
+
+    @Override
     public BoardResponse findAllByBoardId(Long boardId) {
         // 보드 정보 조회
         BoardEntity board = factory.selectFrom(boardEntity)
@@ -37,7 +54,7 @@ public class BoardRepositoryImpl implements BoardRepository {
             .fetchOne();
 
         // 보드가 존재하지 않는경우 exception
-        if(Objects.isNull(board)) {
+        if (Objects.isNull(board)) {
             throw new IllegalArgumentException("존재하지 않는 보드입니다");
         }
 
