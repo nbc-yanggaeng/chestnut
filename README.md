@@ -13,3 +13,8 @@
 <img width="1000" alt="1234" src="https://github.com/nbc-yanggaeng/chestnut/assets/139536736/ece12ff0-686c-4b38-9d4b-69a7543f579e">
 
 ## API 명세서
+- [멤버 API](docs/memberAPI.md)
+- [보드 API](docs/boardAPI.md)
+- [컬럼 API](docs/columnAPI.md)
+- [카드 API](docs/cardAPI.md)
+- [댓글 API](docs/commentAPI.md)
