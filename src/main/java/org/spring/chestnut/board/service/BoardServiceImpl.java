@@ -1,11 +1,13 @@
 package org.spring.chestnut.board.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.spring.chestnut.board.dto.request.BoardDto;
 import org.spring.chestnut.board.dto.request.BoardRequestDto;
+import org.spring.chestnut.board.dto.response.BoardListDto;
 import org.spring.chestnut.board.dto.response.BoardResponse;
 import org.spring.chestnut.board.entity.BoardEntity;
 import org.spring.chestnut.board.entity.CollaboratorEntity;
@@ -26,9 +28,15 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
 
     @Override
+    public List<BoardListDto> getBoardList(Long memberId) {
+        return boardRepository.findBoardsByMemberId(memberId);
+    }
+
+    @Override
     public BoardResponse getBoard(Long boardId, UserDetailsImpl userDetails) {
         // 협력자인지 확인
-        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(), boardId)) {
+        if (!collaboratorRepository.existsByMemberIdAndBoardId(userDetails.getMemberId(),
+            boardId)) {
             throw new IllegalArgumentException("협력자가 아닌 멤버입니다");
         }
         return boardRepository.findAllByBoardId(boardId);
